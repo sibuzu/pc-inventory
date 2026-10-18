@@ -50468,5 +50468,6 @@
       "Scope: PATH Python, common Conda installations, registered Conda environments, ~/.virtualenvs and Python in running containers. Stopped containers and unregistered project venvs are not started or scanned."
     ]
   },
-  "warnings": []
+  "warnings": [],
+  "workPurpose": ""
 }

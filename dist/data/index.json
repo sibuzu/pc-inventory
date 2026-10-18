@@ -3,5 +3,6 @@
   "pc_sdl.json",
   "pc_data.json",
   "pc_rtx.json",
-  "rtx_5090.json"
+  "rtx_5090.json",
+  "pc_nas.json"
 ]

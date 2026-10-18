@@ -1,6 +1,6 @@
 # PC Atlas 電腦規格總覽
 
-以繁體中文瀏覽多台電腦的硬體、作業系統與已安裝軟體。介面使用淺色主題與黑字，左側選單可獨立捲動。`pc_china`、`pc_sdl`、`pc_data`、`pc_rtx`、`rtx_5090` 已擷取實際規格；`pc_nas` 待完成 QNAP SSH 授權後盤點。
+以繁體中文瀏覽多台電腦的硬體、作業系統與已安裝軟體。介面使用淺色主題與黑字，左側選單可獨立捲動。`pc_china`、`pc_sdl`、`pc_data`、`pc_rtx`、`rtx_5090`、`pc_nas` 六台均已擷取實際規格。
 
 ## 透過 SSH 盤點
 
@@ -12,6 +12,9 @@ python collect-ssh.py --host pc_sdl --name pc_sdl --output .sites-runtime/pc_sdl
 # Windows
 python collect-ssh.py --host jack@192.168.100.186 --platform windows --name pc_data --output .sites-runtime/pc_data-raw.json
 python collect-ssh.py --host jack@192.168.100.180 --platform windows --name pc_rtx --output .sites-runtime/pc_rtx-raw.json
+python collect-ssh.py --host jack@192.168.100.156 --platform windows --name rtx_5090 --output .sites-runtime/rtx_5090-raw.json
+# QNAP（pc_nas 是本機 SSH config 別名，admin@192.168.100.185）
+python collect-ssh.py --host pc_nas --platform qnap --name pc_nas --output .sites-runtime/pc_nas-raw.json
 # 僅更新 CUDA、PyTorch 和環境套件（output 必須已存在）
 python collect-ssh.py --host pc_sdl --name pc_sdl --output .sites-runtime/pc_sdl-raw.json --only-ai
 # 更新網站內建資料，保留原有歷史快照與較新的 AI 盤點
@@ -34,7 +37,11 @@ Linux 的硬體來源包含 `/proc`、`/sys`；若 `sudo -n dmidecode -t 17` 已
 
 本機可執行 `python scripts/ai-probe.py` 輸出 AI 盤點 JSON。SSH 採集會自動整合此資訊，`--only-ai` 可單獨更新。沒有回報的欄位保留未知，不根據驅動、Toolkit 或 PyTorch 的其中一個版本推測其他版本；CPU build 與 CUDA build 分開顯示。未註冊的專案 venv、未執行的容器、沒有 Python 的映像檔不會被啟動掃描。探測 PyTorch 會載入該環境的套件，但不執行訓練。
 
-更新採集工具後，請同步 `collect-ssh.py` 與 `scripts/` 中的三個採集工具至 `dist/` 對應位置，讓網頁下載版本保持一致。
+更新採集工具後，請同步 `collect-ssh.py` 與 `scripts/` 中的四個採集工具至 `dist/` 對應位置，讓網頁下載版本保持一致。
+
+QNAP 使用 NAS 內建 Python 2.7，擷取型號、QTS、DIMM、硬碟、MD RAID、已掛載磁碟區及 QPKG/App Center 清單。硬碟原始容量、RAID 容量與磁碟區容量分開呈現。資料夾掃描保留原生位元組路徑，以支援中文名稱，略過符號連結、其他掛載點與快照目錄；不讀取檔案內容或安裝套件。
+
+比較表的「已用儲存」加總最新快照中實體磁碟區的系統已用空間，排除虛擬磁碟區；RAID 鏡像硬碟不會重複加總。「工作用途」對應 JSON 的 `workPurpose`，六台初始皆空白。後續採集未提供該欄位時保留原值；明確傳入空字串可清空。
 
 ## 用 VS Code Live Server 開啟
 

@@ -13,7 +13,7 @@ parser.add_argument('--host',required=True)
 parser.add_argument('--name',required=True)
 parser.add_argument('--output',required=True)
 parser.add_argument('--storage-seconds',type=float,default=45)
-parser.add_argument('--platform',choices=['linux','windows'],default='linux')
+parser.add_argument('--platform',choices=['linux','windows','qnap'],default='linux')
 parser.add_argument('--only-ai',action='store_true',help='Refresh only CUDA/PyTorch in an existing Linux record')
 args=parser.parse_args()
 if not re.fullmatch(r'[a-zA-Z0-9_.@:-]+',args.host) or args.host.startswith('-') or not re.fullmatch(r'[a-zA-Z0-9_-]{1,48}',args.name) or not 0<args.storage_seconds<=600:
@@ -27,6 +27,9 @@ if args.platform=='linux':
     else:
         script=(project/'scripts'/'collect-linux.py').read_text(encoding='utf-8').replace('AI_PROBE_SOURCE = None','AI_PROBE_SOURCE = '+repr(ai_source)).encode('utf-8')
         remote='python3 - --name {0} --storage-seconds {1}'.format(args.name,args.storage_seconds)
+elif args.platform=='qnap':
+    script=(project/'scripts'/'ai-probe.py' if args.only_ai else project/'scripts'/'collect-qnap.py').read_bytes()
+    remote='/usr/local/bin/python -' if args.only_ai else '/usr/local/bin/python - --name {0} --storage-seconds {1}'.format(args.name,args.storage_seconds)
 else:
     wrapper=(project/'scripts'/'collect-windows-remote.ps1').read_text(encoding='utf-8-sig')
     payload_name='.pc-atlas-'+uuid.uuid4().hex+'.json'
@@ -51,6 +54,11 @@ except subprocess.TimeoutExpired:
 if process.returncode:
     raise SystemExit('SSH inventory failed; no output was saved')
 pc=json.loads(data.decode('utf-8'))
+if args.platform=='qnap' and not args.only_ai:
+    print('Inspecting QNAP Python/CUDA/PyTorch availability...')
+    probe=subprocess.run(['ssh','-T','-o','BatchMode=yes','-o','ConnectTimeout=10',args.host,'/usr/local/bin/python -'],input=(project/'scripts'/'ai-probe.py').read_bytes(),stdout=subprocess.PIPE,timeout=240)
+    if probe.returncode==0:
+        pc['ai']=json.loads(probe.stdout.decode('utf-8'))
 if args.only_ai:
     ai=pc
     pc=json.loads(Path(args.output).read_text(encoding='utf-8-sig'))

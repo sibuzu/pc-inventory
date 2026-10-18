@@ -46102,7 +46102,7 @@
                 "children": []
               }
             ],
-            "durationSeconds": 45.0
+            "durationSeconds": 45
           },
           "status": "partial",
           "note": "Readable file lengths; system/protected files may be omitted"
@@ -57973,7 +57973,7 @@
                 "children": []
               }
             ],
-            "durationSeconds": 45.0
+            "durationSeconds": 45
           },
           "status": "partial",
           "note": "Readable file lengths; system/protected files may be omitted"
@@ -69101,7 +69101,7 @@
                 "children": []
               }
             ],
-            "durationSeconds": 45.0
+            "durationSeconds": 45
           },
           "status": "partial",
           "note": "Readable file lengths; system/protected files may be omitted"
@@ -92471,5 +92471,6 @@
     "warnings": [
       "Scope: PATH Python, common Conda installations, registered Conda environments, ~/.virtualenvs and Python in running containers. Stopped containers and unregistered project venvs are not started or scanned."
     ]
-  }
+  },
+  "workPurpose": ""
 }

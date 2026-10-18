@@ -66,6 +66,8 @@ if (Test-Path -LiteralPath $target) {
 if ($existing -and $existing.id -eq $Name) {
     if ($existing.storageSnapshots) { $result.storageSnapshots = @($existing.storageSnapshots) }
     if ($existing.subsystems) { $result.subsystems = $existing.subsystems }
+    if ($existing.ai) { $result.ai = $existing.ai }
+    if ($existing.PSObject.Properties.Name -contains 'workPurpose') { $result.workPurpose = $existing.workPurpose }
 }
 $json = $result | ConvertTo-Json -Depth 40
 [IO.File]::WriteAllText($target,$json,[Text.UTF8Encoding]::new($false))

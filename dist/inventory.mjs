@@ -1,5 +1,6 @@
 import {normalizeStorageSnapshots,normalizeSubsystems,mergeSnapshots} from './usage.mjs';
 import {normalizeAi,mergeAi} from './ai.mjs';
+import {normalizeNas} from './nas.mjs';
 export const plannedNames = ['pc_china','pc_sdl','pc_data','pc_rtx','rtx_5090','pc_nas'];
 const record = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 function text(value, fallback = '') { if(value == null)return fallback;if(typeof value !== 'string')throw new Error('文字欄位格式錯誤');return value.slice(0,1500); }
@@ -13,10 +14,10 @@ export function normalizeComputer(value) {
   if(!record(value.hardware)||!record(value.os))throw new Error('規格檔案缺少硬體或系統資料');
   const h=value.hardware,os=value.os,bios=object(h.bios);
   if(typeof value.collectedAt!=='string'||!Number.isFinite(Date.parse(value.collectedAt)))throw new Error('擷取時間格式錯誤');
-  return {schemaVersion:1,id,name:id,status:'collected',collectedAt:value.collectedAt,source:text(value.source,'匯入 JSON'),
+  return {schemaVersion:1,id,name:id,status:'collected',collectedAt:value.collectedAt,source:text(value.source,'匯入 JSON'),workPurpose:value.workPurpose==null?null:text(value.workPurpose),
     hardware:{manufacturer:text(h.manufacturer),model:text(h.model),memoryGB:number(h.memoryGB),memorySource:text(h.memorySource),
       cpu:list(h.cpu,x=>({name:text(x.name),cores:number(x.cores),threads:number(x.threads),maxClockMHz:number(x.maxClockMHz)}),32),
-      memory:list(h.memory,x=>({capacityGB:number(x.capacityGB),speedMHz:number(x.speedMHz),configuredMHz:number(x.configuredMHz),manufacturer:text(x.manufacturer),partNumber:text(x.partNumber),slot:text(x.slot)}),128),
+      memory:list(h.memory,x=>({capacityGB:number(x.capacityGB),speedMHz:number(x.speedMHz),configuredMHz:number(x.configuredMHz),speedUnit:text(x.speedUnit),manufacturer:text(x.manufacturer),partNumber:text(x.partNumber),slot:text(x.slot)}),128),
       gpu:list(h.gpu,x=>({name:text(x.name),driver:text(x.driver),vramMB:number(x.vramMB),virtual:x.virtual===true}),64),
       motherboard:list(h.motherboard,x=>({manufacturer:text(x.manufacturer),product:text(x.product),version:text(x.version)}),16),
       bios:{manufacturer:text(bios.manufacturer),version:text(bios.version)},
@@ -26,7 +27,7 @@ export function normalizeComputer(value) {
     os:{name:text(os.name),version:text(os.version),build:text(os.build),architecture:text(os.architecture)},
     software:list(value.software,x=>({name:text(x.name),version:text(x.version),publisher:text(x.publisher)})),
     tools:list(value.tools,x=>({name:text(x.name),version:text(x.version)}),256),
-    storageSnapshots:normalizeStorageSnapshots(value.storageSnapshots),subsystems:normalizeSubsystems(value.subsystems),ai:normalizeAi(value.ai),
+    storageSnapshots:normalizeStorageSnapshots(value.storageSnapshots),subsystems:normalizeSubsystems(value.subsystems),ai:normalizeAi(value.ai),nas:normalizeNas(value.nas),
     warnings:Array.isArray(value.warnings)?value.warnings.filter(x=>typeof x==='string').slice(0,50):[]};
 }
 export function parseImport(payload) {
@@ -34,7 +35,7 @@ export function parseImport(payload) {
   if(!Array.isArray(values)||!values.length||values.length>100)throw new Error('請匯入 1 至 100 台電腦的規格');
   return values.map(normalizeComputer);
 }
-export function mergeComputers(existing,incoming) {const validated=parseImport(incoming);const map=new Map(existing.map(x=>[x.id,x]));for(const pc of validated){const prior=map.get(pc.id);const subsystems=!pc.subsystems||(prior?.subsystems&&Date.parse(prior.subsystems.capturedAt)>Date.parse(pc.subsystems.capturedAt))?prior?.subsystems??null:pc.subsystems;map.set(pc.id,{...pc,storageSnapshots:mergeSnapshots(prior?.storageSnapshots,pc.storageSnapshots),subsystems,ai:mergeAi(prior?.ai,pc.ai)});}return [...map.values()];}
+export function mergeComputers(existing,incoming) {const validated=parseImport(incoming);const map=new Map(existing.map(x=>[x.id,x]));for(const pc of validated){const prior=map.get(pc.id);const subsystems=!pc.subsystems||(prior?.subsystems&&Date.parse(prior.subsystems.capturedAt)>Date.parse(pc.subsystems.capturedAt))?prior?.subsystems??null:pc.subsystems;map.set(pc.id,{...pc,workPurpose:pc.workPurpose??prior?.workPurpose??'',storageSnapshots:mergeSnapshots(prior?.storageSnapshots,pc.storageSnapshots),subsystems,ai:mergeAi(prior?.ai,pc.ai)});}return [...map.values()];}
 export function withPlanned(computers) {const map=new Map(computers.map(x=>[x.id,x]));return [...plannedNames.map(id=>map.get(id)??{id,name:id,status:'pending'}),...computers.filter(x=>!plannedNames.includes(x.id))];}
 export function filterSoftware(items,query,ascending=true) {const q=query.toLocaleLowerCase().trim();return items.filter(x=>[x.name,x.version,x.publisher].some(s=>(s||'').toLocaleLowerCase().includes(q))).sort((a,b)=>(ascending?1:-1)*a.name.localeCompare(b.name,'zh-Hant'));}
 export function escapeHtml(value) {return String(value??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
