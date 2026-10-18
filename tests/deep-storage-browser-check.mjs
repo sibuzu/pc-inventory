@@ -8,7 +8,7 @@ page.on('pageerror',error=>errors.push(error.message));
 try{
   await page.goto('http://127.0.0.1:4173');
   await page.getByRole('heading',{name:'pc_china',exact:true}).waitFor();
-  for(const id of ['pc_china','pc_sdl','pc_data','pc_rtx','rtx_5090']){
+  for(const id of process.argv.length>2?process.argv.slice(2):['pc_china','pc_sdl','pc_data','pc_rtx','rtx_5090']){
     const pc=JSON.parse(fs.readFileSync(new URL(`../dist/data/${id}.json`,import.meta.url),'utf8'));
     const latest=pc.storageSnapshots.at(-1);
     assert.equal(latest.expandThresholdBytes,threshold);

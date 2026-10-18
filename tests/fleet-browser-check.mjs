@@ -42,9 +42,16 @@ try{
   await page.getByRole('button',{name:/pc_andy/}).click();await page.getByRole('heading',{name:'pc_andy',exact:true}).waitFor();
   if(files.includes('pc_andy.json')){
     await page.getByRole('tab',{name:'總覽',exact:true}).click();
-    assert.ok(await page.locator('.hardware-grid').count());
+    assert.match(await page.locator('.hardware-grid').innerText(),/Ryzen 7 3700X/);
+    assert.match(await page.locator('.hardware-grid').innerText(),/GTX 1050 Ti/);
     await page.getByRole('tab',{name:'系統環境',exact:true}).click();
-    assert.ok(await page.locator('.ai-inventory').innerText());
+    assert.match(await page.locator('.ai-inventory').innerText(),/12\.6/);
+    assert.match(await page.locator('.ai-inventory').innerText(),/Python39/);
+    await page.getByRole('tab',{name:'子系統',exact:true}).click();
+    await page.locator('.branch-title').filter({hasText:/^Ubuntu-22\.04$/}).click();
+    assert.match(await page.locator('#tabPanel').innerText(),/Ubuntu 22\.04\.5 LTS/);
+    await page.locator('.branch-title').filter({hasText:/^容器$/}).click();
+    assert.match(await page.locator('#tabPanel').innerText(),/14 個/);
     await page.getByRole('tab',{name:'儲存空間',exact:true}).click();
     await page.getByText(/本次依 5 GB 門檻保留深層明細/).waitFor();
   }else await page.getByText('尚未匯入',{exact:true}).waitFor();

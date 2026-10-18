@@ -4,8 +4,8 @@ import fs from 'node:fs';
 import {normalizeComputer} from '../dist/inventory.mjs';
 import {expansionAssessment,expansionDetails,expansionSummary} from '../dist/expansion.mjs';
 const pc=id=>normalizeComputer(JSON.parse(fs.readFileSync(new URL(`../dist/data/${id}.json`,import.meta.url),'utf8')));
-test('seven machines use exact board/CPU limits, rather than generic chipset limits',()=>{
-  const expected=[['pc_china',128,0],['pc_sdl',64,0],['pc_data',64,0],['pc_rtx',128,0],['rtx_5090',256,2],['pc_one',32,2],['pc_nas',8,1]];
+test('eight machines use exact board/CPU limits, rather than generic chipset limits',()=>{
+  const expected=[['pc_china',128,0],['pc_sdl',64,0],['pc_data',64,0],['pc_rtx',128,0],['rtx_5090',256,2],['pc_one',32,2],['pc_andy',128,0],['pc_nas',8,1]];
   for(const [id,maxGB,free] of expected){const a=expansionAssessment(pc(id));assert.equal(a.known,true,id);assert.equal(a.maxGB,maxGB,id);assert.equal(a.free,free,id);assert.ok(a.sources.every(s=>s.url.startsWith('https://')));}
   assert.equal(expansionAssessment(pc('pc_sdl')).atLimit,true);
   assert.equal(expansionAssessment(pc('pc_rtx')).atLimit,true);
