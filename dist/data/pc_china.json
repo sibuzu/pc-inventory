@@ -1,0 +1,917 @@
+{
+    "schemaVersion":  1,
+    "id":  "pc_china",
+    "name":  "pc_china",
+    "status":  "collected",
+    "collectedAt":  "2026-10-18T12:59:48.5485501+08:00",
+    "source":  "Windows CIM / 登錄檔 / 本機命令",
+    "hardware":  {
+                     "manufacturer":  "Micro-Star International Co., Ltd.",
+                     "model":  "MS-7C00",
+                     "cpu":  [
+                                 {
+                                     "name":  "Intel(R) Core(TM) i7-9700F CPU @ 3.00GHz",
+                                     "cores":  8,
+                                     "threads":  8,
+                                     "maxClockMHz":  3000
+                                 }
+                             ],
+                     "memoryGB":  48,
+                     "memory":  [
+                                    {
+                                        "capacityGB":  16,
+                                        "speedMHz":  3200,
+                                        "configuredMHz":  3200,
+                                        "manufacturer":  "Kingston",
+                                        "partNumber":  "KHX3200C16D4/16GX",
+                                        "slot":  "ChannelA-DIMM0"
+                                    },
+                                    {
+                                        "capacityGB":  8,
+                                        "speedMHz":  3200,
+                                        "configuredMHz":  3200,
+                                        "manufacturer":  "Kingston",
+                                        "partNumber":  "KHX3200C16D4/8GX",
+                                        "slot":  "ChannelA-DIMM1"
+                                    },
+                                    {
+                                        "capacityGB":  16,
+                                        "speedMHz":  3200,
+                                        "configuredMHz":  3200,
+                                        "manufacturer":  "Kingston",
+                                        "partNumber":  "KHX3200C16D4/16GX",
+                                        "slot":  "ChannelB-DIMM0"
+                                    },
+                                    {
+                                        "capacityGB":  8,
+                                        "speedMHz":  3200,
+                                        "configuredMHz":  3200,
+                                        "manufacturer":  "Kingston",
+                                        "partNumber":  "KHX3200C16D4/8GX",
+                                        "slot":  "ChannelB-DIMM1"
+                                    }
+                                ],
+                     "gpu":  [
+                                 {
+                                     "name":  "Microsoft Remote Display Adapter",
+                                     "driver":  "10.0.19041.5794",
+                                     "vramMB":  null,
+                                     "virtual":  true
+                                 },
+                                 {
+                                     "name":  "NVIDIA GeForce GTX 1080 Ti",
+                                     "driver":  "560.94",
+                                     "vramMB":  11264,
+                                     "virtual":  false
+                                 }
+                             ],
+                     "motherboard":  [
+                                         {
+                                             "manufacturer":  "Micro-Star International Co., Ltd.",
+                                             "product":  "MAG Z390M MORTAR (MS-7C00)",
+                                             "version":  "1.0"
+                                         }
+                                     ],
+                     "bios":  {
+                                  "manufacturer":  "American Megatrends Inc.",
+                                  "version":  "1.60"
+                              },
+                     "disks":  [
+                                   {
+                                       "name":  "KINGSTON SA2000M8500G",
+                                       "sizeGB":  465.8,
+                                       "interface":  "SCSI",
+                                       "mediaType":  "Fixed hard disk media"
+                                   },
+                                   {
+                                       "name":  "ST8000DM004-2CX188",
+                                       "sizeGB":  7452,
+                                       "interface":  "IDE",
+                                       "mediaType":  "Fixed hard disk media"
+                                   },
+                                   {
+                                       "name":  "INTEL SSDPEKKW512G8",
+                                       "sizeGB":  476.9,
+                                       "interface":  "SCSI",
+                                       "mediaType":  "Fixed hard disk media"
+                                   },
+                                   {
+                                       "name":  "ST8000DM004-2CX188",
+                                       "sizeGB":  7452,
+                                       "interface":  "IDE",
+                                       "mediaType":  "Fixed hard disk media"
+                                   }
+                               ],
+                     "volumes":  [
+                                     {
+                                         "drive":  "C:",
+                                         "fileSystem":  "NTFS",
+                                         "sizeGB":  475.7,
+                                         "freeGB":  75
+                                     },
+                                     {
+                                         "drive":  "D:",
+                                         "fileSystem":  "NTFS",
+                                         "sizeGB":  7452,
+                                         "freeGB":  6106
+                                     },
+                                     {
+                                         "drive":  "E:",
+                                         "fileSystem":  "NTFS",
+                                         "sizeGB":  7452,
+                                         "freeGB":  4888.2
+                                     },
+                                     {
+                                         "drive":  "F:",
+                                         "fileSystem":  "NTFS",
+                                         "sizeGB":  465.8,
+                                         "freeGB":  287.6
+                                     },
+                                     {
+                                         "drive":  "H:",
+                                         "fileSystem":  "FAT32",
+                                         "sizeGB":  5120,
+                                         "freeGB":  4294.7
+                                     },
+                                     {
+                                         "drive":  "I:",
+                                         "fileSystem":  "FAT32",
+                                         "sizeGB":  2048,
+                                         "freeGB":  710.6
+                                     },
+                                     {
+                                         "drive":  "J:",
+                                         "fileSystem":  "FAT32",
+                                         "sizeGB":  5120,
+                                         "freeGB":  4294.7
+                                     },
+                                     {
+                                         "drive":  "K:",
+                                         "fileSystem":  "FAT32",
+                                         "sizeGB":  5141,
+                                         "freeGB":  4294.7
+                                     }
+                                 ],
+                     "network":  [
+                                     {
+                                         "name":  "VMware Virtual Ethernet Adapter for VMnet1",
+                                         "connected":  true,
+                                         "speedMbps":  100
+                                     },
+                                     {
+                                         "name":  "VMware Virtual Ethernet Adapter for VMnet8",
+                                         "connected":  true,
+                                         "speedMbps":  100
+                                     },
+                                     {
+                                         "name":  "Hyper-V Virtual Ethernet Adapter",
+                                         "connected":  true,
+                                         "speedMbps":  10000
+                                     },
+                                     {
+                                         "name":  "Hyper-V Virtual Ethernet Adapter #2",
+                                         "connected":  true,
+                                         "speedMbps":  10000
+                                     },
+                                     {
+                                         "name":  "Hyper-V Virtual Ethernet Adapter #3",
+                                         "connected":  true,
+                                         "speedMbps":  10000
+                                     },
+                                     {
+                                         "name":  "Hyper-V Virtual Ethernet Adapter #4",
+                                         "connected":  true,
+                                         "speedMbps":  10000
+                                     },
+                                     {
+                                         "name":  "Hyper-V Virtual Ethernet Adapter #5",
+                                         "connected":  true,
+                                         "speedMbps":  10000
+                                     },
+                                     {
+                                         "name":  "Intel(R) Ethernet Connection (7) I219-V",
+                                         "connected":  true,
+                                         "speedMbps":  1000
+                                     }
+                                 ]
+                 },
+    "os":  {
+               "name":  "Microsoft Windows 10 企業版",
+               "version":  "10.0.19045",
+               "build":  "19045",
+               "architecture":  "64-bit"
+           },
+    "software":  [
+                     {
+                         "name":  "7-Zip 19.00 (x64)",
+                         "version":  "19.00",
+                         "publisher":  "Igor Pavlov"
+                     },
+                     {
+                         "name":  "Anaconda3 py310_2023.03-0 (Python 3.10.9 64-bit)",
+                         "version":  "py310_2023.03-0",
+                         "publisher":  "Anaconda, Inc."
+                     },
+                     {
+                         "name":  "Android Studio",
+                         "version":  "2024.1",
+                         "publisher":  "Google LLC"
+                     },
+                     {
+                         "name":  "Antigravity (User)",
+                         "version":  "1.15.8",
+                         "publisher":  "Google"
+                     },
+                     {
+                         "name":  "Application Insights Tools for Visual Studio 2015",
+                         "version":  "7.0.20622.1",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Awesomium SDK",
+                         "version":  "1.6.3",
+                         "publisher":  "Khrona LLC"
+                     },
+                     {
+                         "name":  "Bitcoin Core (64-bit)",
+                         "version":  "28.0.0",
+                         "publisher":  "Bitcoin Core project"
+                     },
+                     {
+                         "name":  "CDisplayEx 1.10.33",
+                         "version":  "",
+                         "publisher":  "Progdigy Software S.A.R.L."
+                     },
+                     {
+                         "name":  "Cheat Engine 7.6",
+                         "version":  "",
+                         "publisher":  "Cheat Engine"
+                     },
+                     {
+                         "name":  "CMake",
+                         "version":  "3.28.0",
+                         "publisher":  "Kitware"
+                     },
+                     {
+                         "name":  "Copilot",
+                         "version":  "155.0.4283.60",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "CPUID CPU-Z MSI 1.91",
+                         "version":  "1.91",
+                         "publisher":  "CPUID, Inc."
+                     },
+                     {
+                         "name":  "CrystalDiskMark 8.0.6 Aoi Edition",
+                         "version":  "8.0.6",
+                         "publisher":  "Crystal Dew World"
+                     },
+                     {
+                         "name":  "Docker Desktop",
+                         "version":  "4.40.0",
+                         "publisher":  "Docker Inc."
+                     },
+                     {
+                         "name":  "Entity Framework 6.1.3 Tools  for Visual Studio 2015 Update 1",
+                         "version":  "14.0.41103.0",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Epic Games Launcher",
+                         "version":  "1.3.82.0",
+                         "publisher":  "Epic Games, Inc."
+                     },
+                     {
+                         "name":  "eSpeak NG Text-to-Speech 64-bit",
+                         "version":  "1.51.0",
+                         "publisher":  "eSpeak Community"
+                     },
+                     {
+                         "name":  "FileZilla Client 3.46.3",
+                         "version":  "3.46.3",
+                         "publisher":  "Tim Kosse"
+                     },
+                     {
+                         "name":  "Git version 2.32.0.2",
+                         "version":  "2.32.0.2",
+                         "publisher":  "The Git Development Community"
+                     },
+                     {
+                         "name":  "GnuWin32: sed-4.2.1",
+                         "version":  "4.2.1",
+                         "publisher":  "GnuWin"
+                     },
+                     {
+                         "name":  "Google Chrome",
+                         "version":  "155.0.8059.80",
+                         "publisher":  "Google LLC"
+                     },
+                     {
+                         "name":  "Google Drive",
+                         "version":  "132.0.0.0",
+                         "publisher":  "Google LLC"
+                     },
+                     {
+                         "name":  "HxD Hex Editor 2.5",
+                         "version":  "2.5",
+                         "publisher":  "Maël Hörz"
+                     },
+                     {
+                         "name":  "IIS 10.0 Express",
+                         "version":  "10.0.1736",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "IIS Express Application Compatibility Database for x64",
+                         "version":  "",
+                         "publisher":  ""
+                     },
+                     {
+                         "name":  "IIS Express Application Compatibility Database for x86",
+                         "version":  "",
+                         "publisher":  ""
+                     },
+                     {
+                         "name":  "Intel(R) Network Connections 24.0.0.11",
+                         "version":  "24.0.0.11",
+                         "publisher":  "Intel"
+                     },
+                     {
+                         "name":  "Intel® Hardware Accelerated Execution Manager",
+                         "version":  "7.6.5",
+                         "publisher":  "Intel Corporation"
+                     },
+                     {
+                         "name":  "Intel® 晶片組裝置軟體",
+                         "version":  "10.1.18228.8176",
+                         "publisher":  "Intel(R) Corporation"
+                     },
+                     {
+                         "name":  "Java(TM) SE Development Kit 14.0.2 (64-bit)",
+                         "version":  "14.0.2.0",
+                         "publisher":  "Oracle Corporation"
+                     },
+                     {
+                         "name":  "Java(TM) SE Development Kit 22.0.1 (64-bit)",
+                         "version":  "22.0.1.0",
+                         "publisher":  "Oracle Corporation"
+                     },
+                     {
+                         "name":  "Juniper Networks Network Connect 6.1.0",
+                         "version":  "6.1.0.12965",
+                         "publisher":  "Juniper Networks"
+                     },
+                     {
+                         "name":  "Juniper Networks Network Connect 8.0",
+                         "version":  "8.0.6.32195",
+                         "publisher":  "Juniper Networks"
+                     },
+                     {
+                         "name":  "Juniper Networks Setup Client",
+                         "version":  "1.1.0.0",
+                         "publisher":  "Juniper Networks"
+                     },
+                     {
+                         "name":  "Juniper Networks Setup Client Activex Control",
+                         "version":  "2.1.1.1",
+                         "publisher":  "Juniper Networks"
+                     },
+                     {
+                         "name":  "MarkdownPad 2",
+                         "version":  "2.5.0.27920",
+                         "publisher":  "Apricity Software LLC"
+                     },
+                     {
+                         "name":  "Microsoft .NET Core SDK 3.1.115 (x64)",
+                         "version":  "3.1.115.15280",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft .NET Framework 4.5 Multi-Targeting Pack",
+                         "version":  "4.5.50710",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft .NET Framework 4.5.1 Multi-Targeting Pack",
+                         "version":  "4.5.50932",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft .NET Framework 4.5.1 Multi-Targeting Pack (ENU)",
+                         "version":  "4.5.50932",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft .NET Framework 4.5.1 SDK",
+                         "version":  "4.5.51641",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft .NET Framework 4.5.2 Multi-Targeting Pack",
+                         "version":  "4.5.51651",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft .NET Framework 4.5.2 Multi-Targeting Pack (ENU)",
+                         "version":  "4.5.51209",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft .NET Framework 4.6 SDK",
+                         "version":  "4.6.00081",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft .NET Framework 4.6 Targeting Pack",
+                         "version":  "4.6.00081",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft .NET Framework 4.6 Targeting Pack (ENU)",
+                         "version":  "4.6.00127",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft .NET Framework 4.6.1 SDK",
+                         "version":  "4.6.01055",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft .NET Framework 4.6.1 SDK (繁體中文)",
+                         "version":  "4.6.01055",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft .NET Framework 4.6.1 Targeting Pack",
+                         "version":  "4.6.01055",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft .NET Framework 4.6.1 Targeting Pack (ENU)",
+                         "version":  "4.6.01055",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft .NET Framework 4.6.1 目標套件 (繁體中文)",
+                         "version":  "4.6.01055",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft .NET SDK 6.0.109 (x64)",
+                         "version":  "6.1.922.42108",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft .NET SDK 9.0.203 (x64) from Visual Studio",
+                         "version":  "9.2.325.16509",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft .NET Version Manager (x64) 1.0.0-beta5",
+                         "version":  "1.0.10609.0",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft ASP.NET Core 6.0.9 - Shared Framework (x86)",
+                         "version":  "6.0.9.22419",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft Build of OpenJDK with Hotspot 11.0.16.1+1 (x64)",
+                         "version":  "11.0.16.101",
+                         "publisher":  "Microsoft"
+                     },
+                     {
+                         "name":  "Microsoft Build of OpenJDK with Hotspot 17.0.8+7 (x64)",
+                         "version":  "17.0.8.7",
+                         "publisher":  "Microsoft"
+                     },
+                     {
+                         "name":  "Microsoft Edge",
+                         "version":  "155.0.4283.45",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft Help Viewer 2.2",
+                         "version":  "2.2.25420",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft MPI (10.1.12498.18)",
+                         "version":  "10.1.12498.18",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft Office 專業增強版 2016 - zh-tw",
+                         "version":  "16.0.20430.20180",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft OneDrive",
+                         "version":  "26.183.0920.0005",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft Silverlight",
+                         "version":  "5.1.20513.0",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft SQL Server 2012 Command Line Utilities",
+                         "version":  "11.0.2100.60",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft SQL Server 2012 Native Client",
+                         "version":  "11.0.2100.60",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft SQL Server 2014 Management Objects",
+                         "version":  "12.0.2000.8",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft SQL Server 2014 Management Objects  (x64)",
+                         "version":  "12.0.2000.8",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft SQL Server 2014 Transact-SQL ScriptDom",
+                         "version":  "12.0.2000.8",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft SQL Server 2014 T-SQL Language Service",
+                         "version":  "12.0.2000.8",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft SQL Server 2016 LocalDB",
+                         "version":  "13.0.1601.5",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft SQL Server 2016 Management Objects",
+                         "version":  "13.0.1601.5",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft SQL Server 2016 Management Objects  (x64)",
+                         "version":  "13.0.1601.5",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft SQL Server 2016 T-SQL Language Service",
+                         "version":  "13.0.14500.10",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft SQL Server 2016 T-SQL ScriptDom",
+                         "version":  "13.0.1601.5",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft SQL Server Compact 4.0 SP1 x64 ENU",
+                         "version":  "4.0.8876.1",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft SQL Server Data Tools - enu (14.0.60519.0)",
+                         "version":  "14.0.60519.0",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft System CLR Types for SQL Server 2014",
+                         "version":  "12.0.2402.29",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft System CLR Types for SQL Server 2016",
+                         "version":  "13.0.1601.5",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft System CLR Types for SQL Server 2019",
+                         "version":  "15.0.2000.5",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft Update Health Tools",
+                         "version":  "3.74.0.0",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft Visual C++ 2010  x86 Redistributable - 10.0.40219",
+                         "version":  "10.0.40219",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft Visual C++ 2012 Redistributable (x64) - 11.0.60610",
+                         "version":  "11.0.60610.1",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft Visual C++ 2012 Redistributable (x86) - 11.0.60610",
+                         "version":  "11.0.60610.1",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft Visual C++ 2013 Redistributable (x64) - 12.0.21005",
+                         "version":  "12.0.21005.1",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft Visual C++ 2013 Redistributable (x86) - 12.0.21005",
+                         "version":  "12.0.21005.1",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft Visual C++ v14 Redistributable (x64) - 14.50.35719",
+                         "version":  "14.50.35719.0",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft Visual C++ v14 Redistributable (x86) - 14.50.35719",
+                         "version":  "14.50.35719.0",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft Visual Studio Code (User)",
+                         "version":  "1.142.0",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft Visual Studio Community 2015 with Updates",
+                         "version":  "14.0.25420.1",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft Visual Studio Installer",
+                         "version":  "3.13.2069.59209",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft Web Deploy 3.6",
+                         "version":  "3.1238.1962",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft Windows Desktop Runtime - 3.1.32 (x64)",
+                         "version":  "3.1.32.31915",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Microsoft Windows Desktop Runtime - 6.0.9 (x86)",
+                         "version":  "6.0.9.31620",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "MobaXterm",
+                         "version":  "12.4.0.4248",
+                         "publisher":  "Mobatek"
+                     },
+                     {
+                         "name":  "Neo4j Desktop 1.6.1",
+                         "version":  "1.6.1",
+                         "publisher":  "Neo4j Inc."
+                     },
+                     {
+                         "name":  "Notepad++ (64-bit x64)",
+                         "version":  "8.8.7",
+                         "publisher":  "Notepad++ Team"
+                     },
+                     {
+                         "name":  "NVIDIA App 11.0.5.420",
+                         "version":  "11.0.5.420",
+                         "publisher":  "NVIDIA Corporation"
+                     },
+                     {
+                         "name":  "NVIDIA FrameView SDK 1.5.11504.36206172",
+                         "version":  "1.5.11504.36206172",
+                         "publisher":  "NVIDIA Corporation"
+                     },
+                     {
+                         "name":  "NVIDIA PhysX 系統軟體 9.23.1019",
+                         "version":  "9.23.1019",
+                         "publisher":  "NVIDIA Corporation"
+                     },
+                     {
+                         "name":  "NVIDIA 圖形驅動程式 560.94",
+                         "version":  "560.94",
+                         "publisher":  "NVIDIA Corporation"
+                     },
+                     {
+                         "name":  "NVM for Windows 1.2.2",
+                         "version":  "1.2.2",
+                         "publisher":  "Author Software Inc."
+                     },
+                     {
+                         "name":  "Oracle VM VirtualBox 6.1.26",
+                         "version":  "6.1.26",
+                         "publisher":  "Oracle Corporation"
+                     },
+                     {
+                         "name":  "Prerequisites for SSDT",
+                         "version":  "12.0.2000.8",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Prerequisites for SSDT",
+                         "version":  "13.0.1601.5",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Python 3.12.3 (64-bit)",
+                         "version":  "3.12.3150.0",
+                         "publisher":  "Python Software Foundation"
+                     },
+                     {
+                         "name":  "Python Launcher",
+                         "version":  "3.12.3150.0",
+                         "publisher":  "Python Software Foundation"
+                     },
+                     {
+                         "name":  "QNAP Qfinder Pro",
+                         "version":  "7.5.0.0428",
+                         "publisher":  "QNAP Systems, Inc."
+                     },
+                     {
+                         "name":  "SSHFS-Win 2020 (x64)",
+                         "version":  "3.5.20024",
+                         "publisher":  "Navimatics LLC"
+                     },
+                     {
+                         "name":  "SSHFS-Win Manager",
+                         "version":  "1.2.0",
+                         "publisher":  "Evandro Araujo"
+                     },
+                     {
+                         "name":  "SumatraPDF",
+                         "version":  "3.6.1",
+                         "publisher":  "Krzysztof Kowalczyk"
+                     },
+                     {
+                         "name":  "TeamViewer",
+                         "version":  "15.19.5",
+                         "publisher":  "TeamViewer"
+                     },
+                     {
+                         "name":  "TechPowerUp GPU-Z",
+                         "version":  "",
+                         "publisher":  "TechPowerUp"
+                     },
+                     {
+                         "name":  "TeraCopy version 3.26",
+                         "version":  "3.26",
+                         "publisher":  "Code Sector"
+                     },
+                     {
+                         "name":  "TortoiseGit 2.9.0.0 (64 bit)",
+                         "version":  "2.9.0.0",
+                         "publisher":  "TortoiseGit"
+                     },
+                     {
+                         "name":  "TreeSize Free V4.6.3 (64 bit)",
+                         "version":  "4.6.3",
+                         "publisher":  "JAM Software"
+                     },
+                     {
+                         "name":  "Update for  (KB2504637)",
+                         "version":  "1",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Update for Microsoft Visual Studio 2015 (KB3165756)",
+                         "version":  "14.0.25431",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Update for Windows 10 for x64-based Systems (KB5001716)",
+                         "version":  "8.94.0.0",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "VcXsrv",
+                         "version":  "1.20.8.1",
+                         "publisher":  "marha@users.sourceforge.net"
+                     },
+                     {
+                         "name":  "Visual Studio 2015 Update 3 (KB3022398)",
+                         "version":  "14.0.25420",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Visual Studio Community 2022",
+                         "version":  "17.13.6",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "VLC media player",
+                         "version":  "3.0.11",
+                         "publisher":  "VideoLAN"
+                     },
+                     {
+                         "name":  "VMware Player",
+                         "version":  "17.5.0",
+                         "publisher":  "VMware, Inc."
+                     },
+                     {
+                         "name":  "Windows SDK AddOn",
+                         "version":  "10.1.0.0",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Windows Software Development Kit - Windows 10.0.19041.685",
+                         "version":  "10.1.19041.685",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "Windows Software Development Kit - Windows 10.0.22621.3233",
+                         "version":  "10.1.22621.3233",
+                         "publisher":  "Microsoft Corporation"
+                     },
+                     {
+                         "name":  "WinFsp 2020.2 Beta3",
+                         "version":  "1.8.20276",
+                         "publisher":  "Navimatics LLC"
+                     },
+                     {
+                         "name":  "WinMerge 2.16.4.0",
+                         "version":  "2.16.4.0",
+                         "publisher":  "Thingamahoochie Software"
+                     },
+                     {
+                         "name":  "YuantaServiSign",
+                         "version":  "1.0.24.0514",
+                         "publisher":  "Yuanta"
+                     },
+                     {
+                         "name":  "大侠立志传：碧血丹心",
+                         "version":  "",
+                         "publisher":  "半瓶醋工作室（Half Amateur Studio）"
+                     },
+                     {
+                         "name":  "活俠傳",
+                         "version":  "",
+                         "publisher":  "Obb Studio Inc."
+                     },
+                     {
+                         "name":  "夏色四葉草",
+                         "version":  "",
+                         "publisher":  "Connection"
+                     },
+                     {
+                         "name":  "富邦易盛",
+                         "version":  "9.3.37.335",
+                         "publisher":  "Esunny Information"
+                     },
+                     {
+                         "name":  "逸劍風雲決",
+                         "version":  "",
+                         "publisher":  "The Swordman Studio"
+                     },
+                     {
+                         "name":  "黑神話：悟空 性能測試工具",
+                         "version":  "",
+                         "publisher":  "Game Science"
+                     },
+                     {
+                         "name":  "極星v9.5",
+                         "version":  "9.5.5.26",
+                         "publisher":  "Esunny Information"
+                     },
+                     {
+                         "name":  "槓桿全球贏家",
+                         "version":  "2.3.720.0",
+                         "publisher":  "元大期貨股份有限公司"
+                     },
+                     {
+                         "name":  "嘸蝦米輸入法 J 標準版 (x64)",
+                         "version":  "rev. 289",
+                         "publisher":  "行易有限公司"
+                     }
+                 ],
+    "tools":  [
+                  {
+                      "name":  "Node.js",
+                      "version":  "v24.14.0"
+                  },
+                  {
+                      "name":  "Python",
+                      "version":  "Python 3.12.3"
+                  },
+                  {
+                      "name":  "Git",
+                      "version":  "git version 2.32.0.windows.2"
+                  },
+                  {
+                      "name":  "Docker",
+                      "version":  "Docker version 28.0.4, build b8034c0"
+                  }
+              ],
+    "warnings":  [
+
+                 ]
+}

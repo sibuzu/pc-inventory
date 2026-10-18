@@ -1,0 +1,6 @@
+{
+  "liveServer.settings.root": "/dist",
+  "liveServer.settings.host": "127.0.0.1",
+  "liveServer.settings.port": 5500,
+  "liveServer.settings.wait": 200
+}
