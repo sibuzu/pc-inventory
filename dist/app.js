@@ -16,7 +16,7 @@ const osFamily=pc=>isQnap(pc)?'QNAP':isLinux(pc)?'Linux':/windows/i.test(pc.os?.
 const cpuName=pc=>pc.hardware.cpu.map(x=>x.name.replaceAll('(R)','').replaceAll('(TM)','').replace(/\s+CPU\s+@.+$/,'')).join(' / ')||'未取得';
 const gpuName=pc=>primaryGpu(pc)?.name??'未取得';
 const diskTotal=pc=>pc.hardware.disks.reduce((sum,x)=>sum+(x.sizeGB??0),0);
-const memorySpec=pc=>`${capacity(pc.hardware.memoryGB)}｜${expansionAssessment(pc)?.type?.split(' ')[0]??'類型未確認'}`;
+const memorySpec=pc=>`${capacity(pc.hardware.memoryGB)} (${expansionAssessment(pc)?.type?.split(' ')[0]??'類型未確認'})`;
 const available=()=>withPlanned(computers);
 const current=()=>available().find(x=>x.id===selected)??available()[0];
 const value=v=>v==null||v===''?'—':v;
