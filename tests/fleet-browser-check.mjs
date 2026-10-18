@@ -11,7 +11,7 @@ try{
   assert.match(await page.locator('#readyCount').innerText(),new RegExp(String(files.length).padStart(2,'0')));
   assert.equal(await page.locator('.machine-dot.ready').count(),files.length);
   assert.deepEqual(await page.locator('.machine-name').allTextContents(),plannedNames);
-  assert.equal(plannedNames.at(-2),'pc_one');assert.equal(plannedNames.at(-1),'pc_nas');
+  assert.deepEqual(plannedNames.slice(-3),['pc_one','pc_andy','pc_nas']);
   assert.match(await page.locator('.hardware-grid').innerText(),/RTX 5090/);
   await page.getByRole('tab',{name:'系統環境',exact:true}).click();
   assert.match(await page.locator('.ai-inventory').innerText(),/13\.2/);
@@ -39,7 +39,16 @@ try{
     assert.match(await page.locator('.expansion-section').innerText(),/DDR3 UDIMM/);
   }
   else await page.getByText('尚未匯入',{exact:true}).waitFor();
+  await page.getByRole('button',{name:/pc_andy/}).click();await page.getByRole('heading',{name:'pc_andy',exact:true}).waitFor();
+  if(files.includes('pc_andy.json')){
+    await page.getByRole('tab',{name:'總覽',exact:true}).click();
+    assert.ok(await page.locator('.hardware-grid').count());
+    await page.getByRole('tab',{name:'系統環境',exact:true}).click();
+    assert.ok(await page.locator('.ai-inventory').innerText());
+    await page.getByRole('tab',{name:'儲存空間',exact:true}).click();
+    await page.getByText(/本次依 5 GB 門檻保留深層明細/).waitFor();
+  }else await page.getByText('尚未匯入',{exact:true}).waitFor();
   await page.locator('#compareNav').click();assert.equal(await page.locator('.compare-table thead th').count(),plannedNames.length+1);
   assert.match(await page.locator('.compare-table').innerText(),/rtx_5090/);
-  assert.deepEqual(errors,[]);console.log('Fleet browser check passed: device count, pc_one before pc_nas, CUDA/PyTorch, Docker and comparison.');
+  assert.deepEqual(errors,[]);console.log('Fleet browser check passed: device count, pc_one / pc_andy / pc_nas order, CUDA/PyTorch, Docker and comparison.');
 }finally{await browser.close();}

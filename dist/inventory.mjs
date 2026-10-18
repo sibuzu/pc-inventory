@@ -1,7 +1,7 @@
 import {normalizeStorageSnapshots,normalizeSubsystems,mergeSnapshots} from './usage.mjs';
 import {normalizeAi,mergeAi} from './ai.mjs';
 import {normalizeNas} from './nas.mjs';
-export const plannedNames = ['pc_china','pc_sdl','pc_data','pc_rtx','rtx_5090','pc_one','pc_nas'];
+export const plannedNames = ['pc_china','pc_sdl','pc_data','pc_rtx','rtx_5090','pc_one','pc_andy','pc_nas'];
 const record = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 function text(value, fallback = '') { if(value == null)return fallback;if(typeof value !== 'string')throw new Error('文字欄位格式錯誤');return value.slice(0,1500); }
 function number(value) {if(value == null)return null;if(typeof value !== 'number'||!Number.isFinite(value)||value<0)throw new Error('數值欄位格式錯誤');return value;}

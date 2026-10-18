@@ -31,7 +31,7 @@ try{
   await page.getByRole('heading',{name:'pc_sdl',exact:true}).waitFor();
   await page.getByText('尚未匯入',{exact:true}).waitFor();
   await page.locator('#compareNav').click();
-  assert.equal(await page.locator('.compare-table thead th').count(),8);
+  assert.equal(await page.locator('.compare-table thead th').count(),9);
   assert.match(await page.locator('.compare-table').innerText(),/待匯入/);
   // Keep this import/persistence fixture small; real storage histories are covered separately.
   const pc={...snapshot,storageSnapshots:[],id:'pc_sdl',name:'pc_sdl',software:[{name:'<img src=x onerror="alert(1)">',version:'1',publisher:'Test'}]};

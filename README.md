@@ -2,9 +2,13 @@
 
 以繁體中文瀏覽多台電腦的硬體、作業系統與已安裝軟體。介面使用淺色主題與黑字，左側選單可獨立捲動。`pc_china`、`pc_sdl`、`pc_data`、`pc_rtx`、`rtx_5090`、`pc_one`、`pc_nas` 七台均已擷取實際規格；pc_one 固定排在 pc_nas 前，工作用途暫留空白。
 
+另預留 `pc_andy`，順序為 `pc_one → pc_andy → pc_nas`。目前等待 SSH 公鑰授權，未填入尚未取得的規格，工作用途留空白。
+
 ## 透過 SSH 盤點
 
 在管理電腦上使用 Python 3.10 以上與 SSH 金鑰登入。遠端 Linux 支援 Python 3.4 以上，並相容 Docker 1.13；不安裝遠端套件。
+
+首次授權 Windows 主機可在管理電腦執行 `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/authorize-windows-ssh.ps1 -ComputerName 192.168.100.199`，密碼僅輸入於本機終端機。腳本依遠端帳號的群組選擇授權檔，先修復管理員授權檔的擁有者／ACL，再保留既有金鑰並加入本機 `id_rsa.pub`，最後驗證 `SSH_OK`。遠端登入權限不足以修復 ACL 時，需在目標機器以系統管理員 PowerShell 處理；不修改 sshd 設定或停用密碼登入。
 
 ```powershell
 # Linux（此處 pc_sdl 是本機 SSH config 別名）
