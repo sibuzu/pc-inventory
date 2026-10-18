@@ -33,8 +33,23 @@ class StorageScanTests(unittest.TestCase):
                 self.assertEqual(leaf['kind'],'file')
                 self.assertEqual(leaf['bytes'],150)
                 small=next(c for c in result['children'] if c['name']=='small')
-                self.assertEqual(small['children'],[])
-                self.assertTrue(small['truncated'])
+                self.assertEqual(small['children'][0]['name'],'nested')
+                self.assertEqual(small['children'][0]['children'],[])
+                self.assertTrue(small['children'][0]['truncated'])
+
+    def test_optional_budget_prioritizes_larger_small_folders(self):
+        for module in (collector,linux_collector):
+            with self.subTest(module=module.__name__),tempfile.TemporaryDirectory() as directory:
+                root=Path(directory)
+                for name,size in [('small',10),('larger',90),('mandatory',150)]:
+                    (root/name).mkdir()
+                    (root/name/'file.bin').write_bytes(b'a'*size)
+                result=module.scan_expanded_tree(str(root),100,5,max_optional_nodes=1)
+                nodes={child['name']:child for child in result['children']}
+                self.assertEqual(nodes['small']['children'],[])
+                self.assertEqual(nodes['larger']['children'][0]['name'],'file.bin')
+                self.assertEqual(nodes['mandatory']['children'][0]['name'],'file.bin')
+                self.assertEqual(result['bytes'],250)
 
     def test_small_siblings_cannot_consume_large_branch_budget(self):
         for module in (collector,linux_collector):

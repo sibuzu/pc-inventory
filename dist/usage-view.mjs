@@ -9,7 +9,7 @@ const resourceTable=(headings,rows)=>`<div class="resource-scroll"><table class=
 const disks=items=>items.length?items.map(d=>kv([['虛擬磁碟',d.fileName],['主機實際占用',bytes(d.allocatedBytes)],['VHD 檔案長度',bytes(d.fileBytes)]])).join(''):note('未找到可讀取的 VHDX 檔案。');
 function controls(pc,kind){return `<div class="usage-actions"><button class="button" data-usage-help="${kind}">${kind==='storage'?'＋ 擷取新快照':'↻ 更新盤點'}</button><button class="button" data-usage-export="${kind}">↓ 匯出${kind==='storage'?'快照':'盤點'}</button></div>`;}
 function empty(pc,kind){return `<div class="usage-empty"><span>▤</span><h3>${kind==='storage'?'尚未建立儲存空間快照':'尚未盤點子系統'}</h3><p>${kind==='storage'?'擷取磁碟與資料夾使用量後，可在此逐層展開。':'盤點這台電腦的 WSL 發行版、Docker 引擎、容器與 Images。'}</p><button class="button primary" data-usage-help="${kind}">${kind==='storage'?'擷取第一份快照':'盤點 WSL / Docker'}</button></div>`;}
-function expansionNote(snapshot){return snapshot.expandThresholdBytes?note(`本次依 ${bytes(snapshot.expandThresholdBytes)} 門檻展開：達門檻的資料夾持續往下，達門檻的單一檔案列出名稱；較小分支保留合計。`):'';}
+function expansionNote(snapshot){return snapshot.expandThresholdBytes?note(`本次依 ${bytes(snapshot.expandThresholdBytes)} 門檻保留深層明細：達門檻的資料夾持續往下，達門檻的單一檔案列出名稱；${snapshot.optionalDetailLevels?'較小資料夾也可手動展開已保留的子層，優先保留較大項目。':'較小分支保留合計。'}`):'';}
 export function mountStorage(panel,pc){
   const snapshots=pc.storageSnapshots??[];
   if(!snapshots.length){panel.innerHTML=empty(pc,'storage');return;}
@@ -21,7 +21,7 @@ export function mountStorage(panel,pc){
     const symbol=node.kind==='file'?'▤':node.children.length?'▱':'·';
     const body=`<span class="folder-name"><span class="folder-symbol">${symbol}</span>${e(label)}</span><span class="folder-percent"><i style="width:${ratio}%"></i></span><span class="folder-bytes">${bytes(node.bytes)}</span>`;
     if(node.children.length)return `<details class="folder-node" data-node="${id}"><summary>${body}</summary><div class="folder-children" data-loaded="false"></div></details>`;
-    const detail=node.kind==='file'?'檔案':node.truncated?(selected.expandThresholdBytes&&node.bytes<selected.expandThresholdBytes?'低於展開門檻，已合計':node.kind==='aggregate'?'較小項目已合計':'更深層已合計'):'';
+    const detail=node.kind==='file'?'檔案':node.truncated?(selected.expandThresholdBytes&&node.bytes<selected.expandThresholdBytes?(selected.optionalDetailLevels?'更深層明細未保留':'低於展開門檻，已合計'):node.kind==='aggregate'?'較小項目已合計':'更深層已合計'):'';
     return `<div class="folder-leaf">${body}${detail?`<small class="depth-note">${detail}</small>`:''}${node.partial?'<small class="depth-note">部分掃描</small>':''}${node.errors?'<small class="depth-note">部分項目無法讀取</small>':''}</div>`;
   }
   function render(){nodes=new Map();nextId=0;

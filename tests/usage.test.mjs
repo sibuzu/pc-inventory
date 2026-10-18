@@ -50,8 +50,9 @@ test('malformed usage values and excessive depth are rejected before import',()=
 test('threshold snapshots preserve deep branches, named large files and scan metadata',()=>{
   let tree={name:'large.vhdx',kind:'file',bytes:60*1024**3,files:1,children:[]};
   for(let i=0;i<18;i++)tree={name:`level${i}`,kind:'directory',bytes:tree.bytes,children:[tree]};
-  const result=normalizeStorageSnapshots([{...snapshot,maxDepth:64,expandThresholdBytes:50*1024**3,volumes:[{...snapshot.volumes[0],tree}]}])[0];
+  const result=normalizeStorageSnapshots([{...snapshot,maxDepth:64,expandThresholdBytes:50*1024**3,optionalDetailLevels:1,volumes:[{...snapshot.volumes[0],tree}]}])[0];
   assert.equal(result.expandThresholdBytes,50*1024**3);
+  assert.equal(result.optionalDetailLevels,1);
   let leaf=result.volumes[0].tree;for(let i=0;i<18;i++)leaf=leaf.children[0];
   assert.equal(leaf.kind,'file');assert.equal(leaf.name,'large.vhdx');
 });

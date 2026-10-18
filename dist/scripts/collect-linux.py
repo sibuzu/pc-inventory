@@ -3,6 +3,7 @@ from __future__ import print_function
 import argparse
 import datetime
 import http.client
+import heapq
 import json
 import os
 import platform
@@ -86,8 +87,8 @@ def storage_mounts(mountinfo=None):
     return mounts
 
 
-def scan_expanded_tree(root, threshold, seconds, max_depth=64, skip_mounts=None, max_children=500):
-    """Expand large directories, retain named large files, and summarize small branches."""
+def scan_expanded_tree(root, threshold, seconds, max_depth=64, skip_mounts=None, max_children=500, max_optional_nodes=6000):
+    """Expand large branches; retain bounded, manually expandable small-folder detail."""
     deadline = time.monotonic() + seconds
     skip_mounts = skip_mounts or set()
     def entries(path):
@@ -103,6 +104,7 @@ def scan_expanded_tree(root, threshold, seconds, max_depth=64, skip_mounts=None,
                       bytes=0, files=0, directories=0, errors=0, skipped=0,
                       partial=False, truncated=False, children=[])
         candidates = []
+        top_files = []
         direct_bytes = direct_files = 0
         try:
             for name, filename, entry in entries(path):
@@ -131,17 +133,26 @@ def scan_expanded_tree(root, threshold, seconds, max_depth=64, skip_mounts=None,
                         else:
                             direct_bytes += info.st_size
                             direct_files += 1
+                            heapq.heappush(top_files, (info.st_size, name))
+                            if len(top_files) > 8:
+                                heapq.heappop(top_files)
                 except OSError:
                     result['errors'] += 1
         except OSError:
             result['errors'] += 1
-        if depth >= max_depth or (depth > 0 and result['bytes'] < threshold):
+        if depth >= max_depth:
             result['truncated'] = bool(result['files'] or result['directories'])
             return result
+        for file_bytes, name in top_files:
+            candidates.append(dict(name=name, kind='file', bytes=file_bytes, files=1, directories=0,
+                                   errors=0, skipped=0, partial=False, truncated=False, children=[]))
+            direct_bytes -= file_bytes
+            direct_files -= 1
         candidates.sort(key=lambda child: child['bytes'], reverse=True)
         large = [child for child in candidates if child['bytes'] >= threshold]
         small = [child for child in candidates if child['bytes'] < threshold]
-        slots = max(0, max_children - len(large) - 1)
+        limit = min(max_children, 25) if depth > 0 and result['bytes'] < threshold else max_children
+        slots = max(0, limit - len(large) - 1)
         result['children'] = large + small[:slots]
         omitted = small[slots:]
         if direct_files or omitted:
@@ -152,9 +163,31 @@ def scan_expanded_tree(root, threshold, seconds, max_depth=64, skip_mounts=None,
                 errors=sum(child['errors'] for child in omitted), skipped=sum(child['skipped'] for child in omitted),
                 partial=any(child['partial'] for child in omitted), truncated=bool(omitted), children=[]))
         result['children'].sort(key=lambda child: child['bytes'], reverse=True)
+        if depth > 0 and result['bytes'] < threshold:
+            for child in result['children']:
+                if child['children']:
+                    child['children'] = []
+                    child['truncated'] = True
         return result
     started = time.monotonic()
     result = visit(os.fspath(root) if hasattr(os, 'fspath') else str(root), 0)
+    optional = []
+    def reserve(node):
+        for child in node['children']:
+            if child['kind'] == 'directory' and child['bytes'] >= threshold:
+                reserve(child)
+            elif child['kind'] == 'directory' and child['children']:
+                optional.append((child, child['children']))
+                child['children'] = []
+                child['truncated'] = True
+    reserve(result)
+    # Large branches are mandatory. Spend the optional budget on the largest
+    # remaining small folders, independently of filesystem enumeration order.
+    for child, detail in sorted(optional, key=lambda item: item[0]['bytes'], reverse=True):
+        if len(detail) <= max_optional_nodes:
+            child['children'] = detail
+            child['truncated'] = False
+            max_optional_nodes -= len(detail)
     result['durationSeconds'] = round(time.monotonic() - started, 2)
     return result
 

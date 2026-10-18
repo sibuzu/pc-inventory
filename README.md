@@ -76,9 +76,11 @@ python collect-usage.py --computer dist/data/pc_china.json --kind all
 
 樹狀容量為可讀檔案的邏輯大小，可能含硬連結重複計數；它不等於系統已用空間。目錄接合點與符號連結會略過，不讀取檔案內容。子節點採按需展開，避免一次渲染大量目錄。這是掃描時段的使用量記錄，並非作業系統的原子 VSS 快照。
 
-對大型目錄使用 `--expand-over-gb 50`：以 50 GiB（介面顯示 50 GB）為門檻，持續保留大型資料夾的子層，單一檔案達門檻也會列出名稱。較小分支只保留容量合計；每層最多列出約 500 個項目，但大型分支不會被較小項目擠掉，其餘較小項目歸入合計。深度安全上限為 64 層，達上限或讀取逾時仍會明確標示。此模式走訪可讀檔案的中繼資料以重新計算容量，不讀取檔案內容、不啟動停止中的 WSL。
+對大型目錄使用 `--expand-over-gb 5`：以 5 GiB（介面顯示 5 GB）為門檻，持續保留大型資料夾的子層，單一檔案達門檻也會列出名稱。較小資料夾仍可手動展開額外一層明細，依容量優先保留；每個磁碟區最多額外保留 6,000 個小型節點，每個小資料夾最多約 25 個子項目，並列出至多 8 個具代表性的較大檔案，其餘歸入合計。大型分支不受這項額外預算限制，每層最多列出約 500 個項目，所有達門檻的項目都保留。深度安全上限為 64 層，達上限或讀取逾時仍會明確標示。此模式走訪可讀檔案的中繼資料以重新計算容量，不讀取檔案內容、不啟動停止中的 WSL。
 
-例如：`python collect-usage.py --computer dist/data/pc_china.json --kind storage --expand-over-gb 50 --seconds-per-volume 1200`。SSH 重查工具同樣支援 `--expand-over-gb 50`。
+例如：`python collect-usage.py --computer dist/data/pc_china.json --kind storage --expand-over-gb 5 --seconds-per-volume 1200`。SSH 重查工具同樣支援 `--expand-over-gb 5`。
+
+省略 `--expand-over-gb` 時，儲存重查會沿用該電腦最新快照的展開門檻；舊資料沒有此設定才使用固定深度。大於 5 MiB 的網站內建 JSON 會以緊湊格式儲存，保留所有內容及歷史快照。
 
 只重查 SSH 主機的儲存空間，可執行 `python scripts/recheck-storage.py --name pc_rtx --host jack@192.168.100.180 --platform windows --seconds 600 --output .sites-runtime/recheck-pc_rtx.json`，再以 `manage-inventory.mjs` 匯入。Linux 使用 `--platform linux`；僅當既有非互動 sudo 已授權時才加 `--sudo`。此工具保留原有硬體、軟體、用途及 CUDA／PyTorch 盤點，只新增儲存快照並更新磁碟區容量。深層節點達顯示上限時，仍保留前兩層資料夾的容量歸屬。頁面分開顯示掃描是否逾時、無法讀取的項目、掃描耗時與系統已用／檔案邏輯合計的差額；差額並非可回收空間。
 

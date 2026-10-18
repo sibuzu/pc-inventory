@@ -47,7 +47,9 @@ for line in command(['df','-PT','-B1']).splitlines()[1:]:
     volumes.append(dict(drive=parts[6],fileSystem=parts[1],sizeBytes=int(parts[2]),usedBytes=int(parts[3]),freeBytes=int(parts[4]),physical=True,tree=None,status='not-scanned'))
 mounts=storage_mounts()
 snapshot=dict(id=uuid.uuid4().hex,capturedAt=now(),maxDepth=64 if EXPAND_THRESHOLD else 4,volumes=volumes)
-if EXPAND_THRESHOLD:snapshot['expandThresholdBytes']=EXPAND_THRESHOLD
+if EXPAND_THRESHOLD:
+    snapshot['expandThresholdBytes']=EXPAND_THRESHOLD
+    snapshot['optionalDetailLevels']=1
 for volume in volumes:
     print('Scanning {0}, budget {1}s'.format(volume['drive'],STORAGE_SECONDS),file=sys.stderr,flush=True)
     started=time.monotonic()
@@ -75,6 +77,9 @@ def main():
     if args.expand_over_gb is not None and not 0 < args.expand_over_gb <= 1048576:
         parser.error('Invalid expansion threshold')
     pc=json.loads((ROOT/'dist'/'data'/(args.name+'.json')).read_text(encoding='utf-8'))
+    if args.expand_over_gb is None and pc.get('storageSnapshots'):
+        threshold=pc['storageSnapshots'][-1].get('expandThresholdBytes')
+        if threshold:args.expand_over_gb=threshold/1024**3
     if args.platform=='windows':
         name='.pc-atlas-storage-'+uuid.uuid4().hex+'.json'
         payload=json.dumps(dict(seconds=args.seconds,expandOverGB=args.expand_over_gb,usage=(ROOT/'collect-usage.py').read_text(encoding='utf-8'))).encode('utf-8')
