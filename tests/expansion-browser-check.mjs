@@ -20,7 +20,7 @@ try{
   const rows=page.locator('.compare-table tbody tr');
   const memory=rows.filter({has:page.getByText('記憶體擴充',{exact:true})});
   const storage=rows.filter({has:page.getByText('儲存擴充',{exact:true})});
-  assert.equal(await memory.locator('td').count(),7);assert.equal(await storage.locator('td').count(),7);
+  assert.equal(await memory.locator('td').count(),8);assert.equal(await storage.locator('td').count(),8);
   assert.match(await memory.locator('td').nth(4).innerText(),/已達官方 128 GB/);
   assert.match(await storage.locator('td').nth(5).innerText(),/GPU 改為 x8/);
   await page.screenshot({path:path.join(screenshots,'comparison.png'),fullPage:true});

@@ -1,6 +1,6 @@
 # PC Atlas 電腦規格總覽
 
-以繁體中文瀏覽多台電腦的硬體、作業系統與已安裝軟體。介面使用淺色主題與黑字，左側選單可獨立捲動。`pc_china`、`pc_sdl`、`pc_data`、`pc_rtx`、`rtx_5090`、`pc_nas` 六台均已擷取實際規格。
+以繁體中文瀏覽多台電腦的硬體、作業系統與已安裝軟體。介面使用淺色主題與黑字，左側選單可獨立捲動。`pc_china`、`pc_sdl`、`pc_data`、`pc_rtx`、`rtx_5090`、`pc_one`、`pc_nas` 七台均已擷取實際規格；pc_one 固定排在 pc_nas 前，工作用途暫留空白。
 
 ## 透過 SSH 盤點
 
@@ -13,6 +13,7 @@ python collect-ssh.py --host pc_sdl --name pc_sdl --output .sites-runtime/pc_sdl
 python collect-ssh.py --host jack@192.168.100.186 --platform windows --name pc_data --output .sites-runtime/pc_data-raw.json
 python collect-ssh.py --host jack@192.168.100.180 --platform windows --name pc_rtx --output .sites-runtime/pc_rtx-raw.json
 python collect-ssh.py --host jack@192.168.100.156 --platform windows --name rtx_5090 --output .sites-runtime/rtx_5090-raw.json
+python collect-ssh.py --host jack@192.168.100.190 --platform windows --name pc_one --storage-seconds 600 --output .sites-runtime/pc_one-raw.json
 # QNAP（pc_nas 是本機 SSH config 別名，admin@192.168.100.185）
 python collect-ssh.py --host pc_nas --platform qnap --name pc_nas --output .sites-runtime/pc_nas-raw.json
 # 僅更新 CUDA、PyTorch 和環境套件（output 必須已存在）
@@ -21,7 +22,7 @@ python collect-ssh.py --host pc_sdl --name pc_sdl --output .sites-runtime/pc_sdl
 node manage-inventory.mjs .sites-runtime/pc_sdl-raw.json
 ```
 
-Linux 使用 SSH stdin 執行採集程式；Windows 先透過 SCP 傳送一次性來源資料，再由 PowerShell 執行暫存工具，完成後清除本次檔案。Windows 遠端需要 PATH 中有 Python。工具只查詢狀態，不啟停容器或子系統、不安裝或升級套件。預設使用每個磁碟區 45 秒掃描預算，可用 `--storage-seconds 30` 調整。
+Linux 使用 SSH stdin 執行採集程式；Windows 先透過 SCP 傳送一次性來源資料與短指令啟動的 PowerShell 腳本，避免 Windows 命令列長度限制，完成後清除本次檔案。Windows 預設使用 PATH 中的 Python；只有 Windows Store 別名時，可傳入 `--python-archive <本機官方 Windows embeddable Python ZIP>`，暫存解壓後執行並清除，不安裝 Python，也不將暫存執行環境列入 AI／Python 清單。工具只查詢狀態，不啟停容器或子系統、不安裝或升級套件。Windows 新盤點預設採用 5 GB 展開門檻，`--expand-over-gb` 可調整。預設使用每個磁碟區 45 秒掃描預算，可用 `--storage-seconds 600` 增加時間。
 
 Linux 的硬體來源包含 `/proc`、`/sys`；若 `sudo -n dmidecode -t 17` 已獲授權，會擷取 DIMM 容量、插槽、型號及時脈，不保存序號。無權限時使用 OS 可見的 MemTotal 並標明來源。軟體清單為已安裝 dpkg 套件。Linux Docker 透過本機 Unix socket 執行 GET 查詢，記錄 Engine OS、Image OS/架構/大小、容器可寫層與 Volume 使用量。Image 共用層總量使用 Engine 的 LayersSize，不重複加總各 Image 的大小。未提供的回收空間與快取保留未知。
 

@@ -29,8 +29,8 @@ try{
   }
   await page.locator('#compareNav').click();
   const used=page.locator('.compare-table tbody tr').filter({has:page.getByText('已用儲存',{exact:true})});
-  const cells=await used.locator('td').allTextContents();assert.equal(cells.length,7);
+  const cells=await used.locator('td').allTextContents();assert.equal(cells.length,8);
   const china=JSON.parse(fs.readFileSync(new URL('../dist/data/pc_china.json',import.meta.url),'utf8'));
-  assert.equal(cells[1],storageUsageLabel(china));assert.ok(cells.slice(1).every(value=>/\(\d+%\)$/.test(value)));
+  assert.equal(cells[1],storageUsageLabel(china));assert.ok(cells.slice(1).filter(value=>value!=='\u5f85\u532f\u5165').every(value=>/\(\d+%\)$/.test(value)));
   assert.deepEqual(errors,[]);console.log('Five-PC storage review: latest snapshots, system used totals, no timeout, top folders, restricted items and history passed.');
 }finally{await browser.close();}

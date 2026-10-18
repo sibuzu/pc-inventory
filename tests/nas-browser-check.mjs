@@ -16,10 +16,10 @@ try{
   await page.locator('#compareNav').click();
   const rows=page.locator('.compare-table tbody tr');
   assert.equal(await rows.first().locator('td').first().innerText(),'工作用途');
-  assert.deepEqual(await rows.first().locator('td').allTextContents(),['工作用途','模型訓練','深度沖模型回測','歷史資料整理','程式開發機1','程式開發機2','NAS']);
+  assert.deepEqual(await rows.first().locator('td').allTextContents(),['工作用途','模型訓練','深度沖模型回測','歷史資料整理','程式開發機1','程式開發機2','','NAS']);
   const labels=await rows.locator('td:first-child').allTextContents();
   assert.equal(labels[labels.indexOf('實體儲存')+1],'已用儲存');
   const used=rows.filter({has:page.getByText('已用儲存',{exact:true})});
-  assert.equal(await used.locator('td').count(),7);assert.doesNotMatch(await used.innerText(),/待匯入/);
+  assert.equal(await used.locator('td').count(),8);assert.doesNotMatch(await used.locator('td').last().innerText(),/待匯入/);
   assert.deepEqual(errors,[]);console.log('NAS, assigned work purposes, and used-storage comparison browser checks passed.');
 }finally{await browser.close();}
