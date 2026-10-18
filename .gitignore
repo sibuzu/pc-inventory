@@ -2,3 +2,5 @@ node_modules/
 .sites-runtime/
 *.tar.gz
 *.tgz
+__pycache__/
+*.pyc

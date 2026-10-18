@@ -1,0 +1,14 @@
+/* Keep every machine reachable on short desktop windows. */
+.sidebar{overflow-y:auto;overscroll-behavior-y:contain;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:#bac9ae #f8faf5}
+.sidebar>*{flex-shrink:0}
+.sidebar::-webkit-scrollbar{width:7px}
+.sidebar::-webkit-scrollbar-track{background:#f8faf5}
+.sidebar::-webkit-scrollbar-thumb{background:#bac9ae;border:2px solid #f8faf5;border-radius:6px}
+/* Secondary text stays readable in the light theme. */
+.device-subtitle,.spec-card p,.block-heading small,.info-table td:first-child,.storage-label span:last-child,.snapshot-foot,.software-table td:last-child,.software-toolbar span,.compare-note,.pending-view p,.usage-kv dt,.usage-note,.resource-table th,.usage-last-checked,.usage-count{color:#6c7e61}
+@media(max-width:760px){.sidebar{overflow:visible;scrollbar-gutter:auto}}
+/* Explicit black typography, including secondary labels and inline colors. */
+:root{--text:#000;--muted:#000}
+body,body *{color:#000!important}
+input::placeholder,textarea::placeholder{color:#333!important;opacity:1}
+.button.primary,.button.primary:hover{background:#d5e8b8;border-color:#a5bf8b}

@@ -59,6 +59,14 @@ $result = [ordered]@{
 $target = [IO.Path]::GetFullPath($OutputPath)
 $parent = Split-Path -Parent $target
 if (!(Test-Path -LiteralPath $parent)) { New-Item -ItemType Directory -Path $parent -Force | Out-Null }
-$json = $result | ConvertTo-Json -Depth 12
+$existing = $null
+if (Test-Path -LiteralPath $target) {
+    try { $existing = Get-Content -LiteralPath $target -Raw -Encoding UTF8 | ConvertFrom-Json } catch {}
+}
+if ($existing -and $existing.id -eq $Name) {
+    if ($existing.storageSnapshots) { $result.storageSnapshots = @($existing.storageSnapshots) }
+    if ($existing.subsystems) { $result.subsystems = $existing.subsystems }
+}
+$json = $result | ConvertTo-Json -Depth 40
 [IO.File]::WriteAllText($target,$json,[Text.UTF8Encoding]::new($false))
 Write-Output "已擷取 $Name，軟體 $($software.Count) 筆，儲存至 $target"

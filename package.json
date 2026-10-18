@@ -2,5 +2,5 @@
   "name": "pc-atlas",
   "private": true,
   "type": "module",
-  "scripts": { "start": "node serve.mjs", "check": "node --check dist/app.js && node --test tests/inventory.test.mjs" }
+  "scripts": { "start": "node serve.mjs", "check": "node --check dist/app.js && node --check dist/usage-view.mjs && node --test tests/*.test.mjs" }
 }

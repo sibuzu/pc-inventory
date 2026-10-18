@@ -30,7 +30,7 @@ try{
   await page.getByRole('heading',{name:'pc_sdl',exact:true}).waitFor();
   await page.getByText('尚未匯入',{exact:true}).waitFor();
   await page.locator('#compareNav').click();
-  assert.equal(await page.locator('.compare-table thead th').count(),6);
+  assert.equal(await page.locator('.compare-table thead th').count(),7);
   assert.match(await page.locator('.compare-table').innerText(),/待匯入/);
   const pc={...snapshot,id:'pc_sdl',name:'pc_sdl',software:[{name:'<img src=x onerror="alert(1)">',version:'1',publisher:'Test'}]};
   await page.locator('#importFile').setInputFiles({name:'pc_sdl.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(pc))});
