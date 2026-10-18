@@ -19,9 +19,9 @@ test('used storage selects newest snapshot and excludes virtual and unknown volu
   assert.equal(usedStorageBytes({storageSnapshots:snapshots}),20);
   assert.equal(usedStorageBytes({}),null);
 });
-test('work purpose starts blank and survives rescans, while an explicit blank can clear it',()=>{
-  assert.equal(raw.workPurpose,'');const prior=normalizeComputer({...raw,workPurpose:'資料備份'});
+test('work purpose survives rescans, while an explicit blank can clear it',()=>{
+  assert.equal(raw.workPurpose,'NAS');const prior=normalizeComputer({...raw,workPurpose:'資料備份'});
   const incoming={...raw};delete incoming.workPurpose;
   assert.equal(mergeComputers([prior],[incoming])[0].workPurpose,'資料備份');
-  assert.equal(mergeComputers([prior],[raw])[0].workPurpose,'');
+  assert.equal(mergeComputers([prior],[{...raw,workPurpose:''}])[0].workPurpose,'');
 });
