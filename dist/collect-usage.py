@@ -53,7 +53,9 @@ def scan_tree(root, max_depth=4, seconds=45, max_nodes=4000):
                             node['errors'] += child['errors']
                             node['skipped'] += child['skipped']
                             node['partial'] |= child['partial']
-                            if depth < max_depth and budget[0] > 0:
+                            # Keep top-level attribution even after deep folders
+                            # consume the display-node budget.
+                            if depth < max_depth and (depth < 2 or budget[0] > 0):
                                 budget[0] -= 1
                                 node['children'].append(child)
                             else:
@@ -104,6 +106,7 @@ def collect_storage(drives=None, seconds=45, depth=4):
             tree = volume['tree']
             volume['status'] = 'partial' if tree['partial'] or tree['errors'] else 'complete'
             volume['note'] = 'Readable file lengths; system/protected files may be omitted'
+            print(f"Finished {volume['drive']}: bytes={tree['bytes']}, files={tree['files']}, timedOut={tree['partial']}, errors={tree['errors']}, seconds={tree['durationSeconds']}", flush=True)
         result['volumes'].append(volume)
     result['completedAt'] = now()
     return result

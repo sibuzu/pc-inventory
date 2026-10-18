@@ -71,6 +71,21 @@ def memory_modules():
     return modules
 
 
+def storage_mounts(mountinfo=None):
+    records=[line.split() for line in (read('/proc/self/mountinfo') if mountinfo is None else mountinfo).splitlines()]
+    root_device=next((fields[2] for fields in records if len(fields)>4 and fields[4]=='/'),None)
+    mounts=set()
+    for fields in records:
+        if len(fields)<5:continue
+        origin=fields[3].replace('\\040',' ');target=fields[4].replace('\\040',' ')
+        if target=='/':continue
+        # Docker can bind a backing directory onto itself. It is not an alias
+        # and must be counted once; other mount targets are scanned separately.
+        if fields[2]==root_device and origin==target:continue
+        mounts.add(target)
+    return mounts
+
+
 def scan_tree(root, seconds, skip_mounts, max_depth=4):
     deadline = time.monotonic() + seconds
     remaining = [2200]
@@ -96,7 +111,8 @@ def scan_tree(root, seconds, skip_mounts, max_depth=4):
                             result[key] += child[key]
                         result['directories'] += child['directories'] + 1
                         result['partial'] |= child['partial']
-                        if depth < max_depth and remaining[0] > 0:
+                        # Deep directories must not hide later top-level folders.
+                        if depth < max_depth and (depth < 2 or remaining[0] > 0):
                             remaining[0] -= 1
                             result['children'].append(child)
                         else:
@@ -262,11 +278,7 @@ def inventory(name, storage_seconds):
         exec(compile(AI_PROBE_SOURCE,'ai-probe.py','exec'),namespace)
         ai=namespace['collect_ai']()
     subsystems=dict(id=uuid.uuid4().hex,capturedAt=now(),completedAt=now(),wsl=dict(available=False,status='not-applicable',distributions=[]),docker=docker)
-    mounts=set()
-    for line in read('/proc/self/mountinfo').splitlines():
-        fields=line.split()
-        if len(fields)>4 and fields[4]!='/':
-            mounts.add(fields[4].replace('\\040',' '))
+    mounts=storage_mounts()
     snapshot=dict(id=uuid.uuid4().hex,capturedAt=now(),maxDepth=4,volumes=volumes)
     for volume in volumes:
         print('Scanning {0}, budget {1}s...'.format(volume['drive'],storage_seconds),file=sys.stderr,flush=True)
