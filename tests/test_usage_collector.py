@@ -11,6 +11,59 @@ linux_collector=importlib.util.module_from_spec(linux_spec)
 linux_spec.loader.exec_module(linux_collector)
 
 class StorageScanTests(unittest.TestCase):
+    def test_large_directories_expand_past_old_depth_and_show_large_files(self):
+        for module in (collector,linux_collector):
+            with self.subTest(module=module.__name__),tempfile.TemporaryDirectory() as directory:
+                root=Path(directory)
+                deep=root.joinpath(*['level'+str(i) for i in range(12)])
+                deep.mkdir(parents=True)
+                (deep/'large.bin').write_bytes(b'a'*150)
+                (deep/'small.bin').write_bytes(b'b'*10)
+                (root/'small'/'nested').mkdir(parents=True)
+                (root/'small'/'nested'/'tiny.bin').write_bytes(b'c'*20)
+                result=module.scan_expanded_tree(str(root),100,5)
+                self.assertEqual(result['bytes'],180)
+                self.assertEqual(result['files'],3)
+                self.assertFalse(result['partial'])
+                node=result
+                for i in range(12):
+                    self.assertEqual(sum(c['bytes'] for c in node['children']),node['bytes'])
+                    node=next(c for c in node['children'] if c['name']=='level'+str(i))
+                leaf=next(c for c in node['children'] if c['name']=='large.bin')
+                self.assertEqual(leaf['kind'],'file')
+                self.assertEqual(leaf['bytes'],150)
+                small=next(c for c in result['children'] if c['name']=='small')
+                self.assertEqual(small['children'],[])
+                self.assertTrue(small['truncated'])
+
+    def test_small_siblings_cannot_consume_large_branch_budget(self):
+        for module in (collector,linux_collector):
+            with self.subTest(module=module.__name__),tempfile.TemporaryDirectory() as directory:
+                root=Path(directory)
+                for i in range(12):
+                    (root/('small'+str(i))).mkdir()
+                    (root/('small'+str(i))/'file').write_bytes(b'a')
+                (root/'large').mkdir()
+                (root/'large'/'boundary.bin').write_bytes(b'b'*100)
+                result=module.scan_expanded_tree(str(root),100,5,max_children=3)
+                self.assertEqual(result['bytes'],112)
+                self.assertEqual(sum(c['bytes'] for c in result['children']),112)
+                large=next(c for c in result['children'] if c['name']=='large')
+                self.assertEqual(large['children'][0]['name'],'boundary.bin')
+                self.assertEqual(large['children'][0]['kind'],'file')
+                self.assertEqual(len(result['children']),3)
+
+    def test_expansion_skips_mount_aliases_and_honors_deadline(self):
+        for module in (collector,linux_collector):
+            with self.subTest(module=module.__name__),tempfile.TemporaryDirectory() as directory:
+                root=Path(directory);(root/'alias').mkdir()
+                (root/'alias'/'file').write_bytes(b'a'*200)
+                result=module.scan_expanded_tree(str(root),100,5,skip_mounts={str(root/'alias')})
+                self.assertEqual(result['bytes'],0)
+                self.assertEqual(result['skipped'],1)
+                result=module.scan_expanded_tree(str(root),100,0)
+                self.assertTrue(result['partial'])
+
     def test_linux_self_bind_backing_store_is_not_omitted(self):
         mounts='1 0 8:1 / / rw - ext4 /dev/root rw\n2 1 8:1 /var/lib/docker/aufs /var/lib/docker/aufs rw - ext4 /dev/root rw\n3 1 8:1 /home/user/git /dvol/git rw - ext4 /dev/root rw\n4 1 0:1 / /proc rw - proc proc rw\n'
         skipped=linux_collector.storage_mounts(mounts)

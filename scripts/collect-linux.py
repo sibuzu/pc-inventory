@@ -86,7 +86,82 @@ def storage_mounts(mountinfo=None):
     return mounts
 
 
-def scan_tree(root, seconds, skip_mounts, max_depth=4):
+def scan_expanded_tree(root, threshold, seconds, max_depth=64, skip_mounts=None, max_children=500):
+    """Expand large directories, retain named large files, and summarize small branches."""
+    deadline = time.monotonic() + seconds
+    skip_mounts = skip_mounts or set()
+    def entries(path):
+        if hasattr(os, 'scandir'):
+            with os.scandir(path) as items:
+                for entry in items:
+                    yield entry.name, entry.path, entry
+        else:
+            for name in os.listdir(path):
+                yield name, os.path.join(path, name), None
+    def visit(path, depth):
+        result = dict(name=os.path.basename(str(path).rstrip('\\/')) or str(path), kind='directory',
+                      bytes=0, files=0, directories=0, errors=0, skipped=0,
+                      partial=False, truncated=False, children=[])
+        candidates = []
+        direct_bytes = direct_files = 0
+        try:
+            for name, filename, entry in entries(path):
+                if time.monotonic() >= deadline:
+                    result['partial'] = True
+                    break
+                try:
+                    info = entry.stat(follow_symlinks=False) if entry else os.lstat(filename)
+                    if stat.S_ISLNK(info.st_mode) or filename in skip_mounts or (stat.S_ISDIR(info.st_mode) and getattr(info, 'st_file_attributes', 0) & 0x400):
+                        result['skipped'] += 1
+                        continue
+                    if stat.S_ISDIR(info.st_mode):
+                        child = visit(filename, depth + 1)
+                        for key in ('bytes', 'files', 'errors', 'skipped'):
+                            result[key] += child[key]
+                        result['directories'] += child['directories'] + 1
+                        result['partial'] |= child['partial']
+                        candidates.append(child)
+                    elif stat.S_ISREG(info.st_mode):
+                        result['bytes'] += info.st_size
+                        result['files'] += 1
+                        if info.st_size >= threshold:
+                            candidates.append(dict(name=name, kind='file', bytes=info.st_size, files=1,
+                                                   directories=0, errors=0, skipped=0, partial=False,
+                                                   truncated=False, children=[]))
+                        else:
+                            direct_bytes += info.st_size
+                            direct_files += 1
+                except OSError:
+                    result['errors'] += 1
+        except OSError:
+            result['errors'] += 1
+        if depth >= max_depth or (depth > 0 and result['bytes'] < threshold):
+            result['truncated'] = bool(result['files'] or result['directories'])
+            return result
+        candidates.sort(key=lambda child: child['bytes'], reverse=True)
+        large = [child for child in candidates if child['bytes'] >= threshold]
+        small = [child for child in candidates if child['bytes'] < threshold]
+        slots = max(0, max_children - len(large) - 1)
+        result['children'] = large + small[:slots]
+        omitted = small[slots:]
+        if direct_files or omitted:
+            result['children'].append(dict(name='[smaller folders / files]', kind='aggregate',
+                bytes=direct_bytes + sum(child['bytes'] for child in omitted),
+                files=direct_files + sum(child['files'] for child in omitted),
+                directories=sum(child['directories'] + (1 if child['kind'] == 'directory' else 0) for child in omitted),
+                errors=sum(child['errors'] for child in omitted), skipped=sum(child['skipped'] for child in omitted),
+                partial=any(child['partial'] for child in omitted), truncated=bool(omitted), children=[]))
+        result['children'].sort(key=lambda child: child['bytes'], reverse=True)
+        return result
+    started = time.monotonic()
+    result = visit(os.fspath(root) if hasattr(os, 'fspath') else str(root), 0)
+    result['durationSeconds'] = round(time.monotonic() - started, 2)
+    return result
+
+
+def scan_tree(root, seconds, skip_mounts, max_depth=4, expand_threshold=None):
+    if expand_threshold is not None:
+        return scan_expanded_tree(root, expand_threshold, seconds, max_depth, skip_mounts)
     deadline = time.monotonic() + seconds
     remaining = [2200]
     def visit(path, depth):

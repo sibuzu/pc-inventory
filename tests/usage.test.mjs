@@ -42,7 +42,16 @@ test('snapshot histories de-duplicate by ID and retain latest twenty records',()
 });
 test('malformed usage values and excessive depth are rejected before import',()=>{
   assert.throws(()=>normalizeStorageSnapshots([{...snapshot,volumes:[{...snapshot.volumes[0],sizeBytes:-1}]}]));
-  let tree={name:'end',bytes:1,children:[]};for(let i=0;i<12;i++)tree={name:'folder',bytes:1,children:[tree]};
+  let tree={name:'end',bytes:1,children:[]};for(let i=0;i<66;i++)tree={name:'folder',bytes:1,children:[tree]};
   assert.throws(()=>normalizeStorageSnapshots([{...snapshot,volumes:[{...snapshot.volumes[0],tree}]}]));
   assert.throws(()=>normalizeSubsystems({...pc.subsystems,capturedAt:'yesterday'}));assert.equal(bytes(1024**3),'1 GB');assert.equal(bytes(null),'未取得');
+});
+
+test('threshold snapshots preserve deep branches, named large files and scan metadata',()=>{
+  let tree={name:'large.vhdx',kind:'file',bytes:60*1024**3,files:1,children:[]};
+  for(let i=0;i<18;i++)tree={name:`level${i}`,kind:'directory',bytes:tree.bytes,children:[tree]};
+  const result=normalizeStorageSnapshots([{...snapshot,maxDepth:64,expandThresholdBytes:50*1024**3,volumes:[{...snapshot.volumes[0],tree}]}])[0];
+  assert.equal(result.expandThresholdBytes,50*1024**3);
+  let leaf=result.volumes[0].tree;for(let i=0;i<18;i++)leaf=leaf.children[0];
+  assert.equal(leaf.kind,'file');assert.equal(leaf.name,'large.vhdx');
 });

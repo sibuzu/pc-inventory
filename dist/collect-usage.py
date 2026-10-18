@@ -26,8 +26,83 @@ def run(args, timeout=12):
         return -1, '', 'Command timed out' if isinstance(error, subprocess.TimeoutExpired) else 'Command unavailable'
 
 
-def scan_tree(root, max_depth=4, seconds=45, max_nodes=4000):
+def scan_expanded_tree(root, threshold, seconds, max_depth=64, skip_mounts=None, max_children=500):
+    """Expand large directories, retain named large files, and summarize small branches."""
+    deadline = time.monotonic() + seconds
+    skip_mounts = skip_mounts or set()
+    def entries(path):
+        if hasattr(os, 'scandir'):
+            with os.scandir(path) as items:
+                for entry in items:
+                    yield entry.name, entry.path, entry
+        else:
+            for name in os.listdir(path):
+                yield name, os.path.join(path, name), None
+    def visit(path, depth):
+        result = dict(name=os.path.basename(str(path).rstrip('\\/')) or str(path), kind='directory',
+                      bytes=0, files=0, directories=0, errors=0, skipped=0,
+                      partial=False, truncated=False, children=[])
+        candidates = []
+        direct_bytes = direct_files = 0
+        try:
+            for name, filename, entry in entries(path):
+                if time.monotonic() >= deadline:
+                    result['partial'] = True
+                    break
+                try:
+                    info = entry.stat(follow_symlinks=False) if entry else os.lstat(filename)
+                    if stat.S_ISLNK(info.st_mode) or filename in skip_mounts or (stat.S_ISDIR(info.st_mode) and getattr(info, 'st_file_attributes', 0) & 0x400):
+                        result['skipped'] += 1
+                        continue
+                    if stat.S_ISDIR(info.st_mode):
+                        child = visit(filename, depth + 1)
+                        for key in ('bytes', 'files', 'errors', 'skipped'):
+                            result[key] += child[key]
+                        result['directories'] += child['directories'] + 1
+                        result['partial'] |= child['partial']
+                        candidates.append(child)
+                    elif stat.S_ISREG(info.st_mode):
+                        result['bytes'] += info.st_size
+                        result['files'] += 1
+                        if info.st_size >= threshold:
+                            candidates.append(dict(name=name, kind='file', bytes=info.st_size, files=1,
+                                                   directories=0, errors=0, skipped=0, partial=False,
+                                                   truncated=False, children=[]))
+                        else:
+                            direct_bytes += info.st_size
+                            direct_files += 1
+                except OSError:
+                    result['errors'] += 1
+        except OSError:
+            result['errors'] += 1
+        if depth >= max_depth or (depth > 0 and result['bytes'] < threshold):
+            result['truncated'] = bool(result['files'] or result['directories'])
+            return result
+        candidates.sort(key=lambda child: child['bytes'], reverse=True)
+        large = [child for child in candidates if child['bytes'] >= threshold]
+        small = [child for child in candidates if child['bytes'] < threshold]
+        slots = max(0, max_children - len(large) - 1)
+        result['children'] = large + small[:slots]
+        omitted = small[slots:]
+        if direct_files or omitted:
+            result['children'].append(dict(name='[smaller folders / files]', kind='aggregate',
+                bytes=direct_bytes + sum(child['bytes'] for child in omitted),
+                files=direct_files + sum(child['files'] for child in omitted),
+                directories=sum(child['directories'] + (1 if child['kind'] == 'directory' else 0) for child in omitted),
+                errors=sum(child['errors'] for child in omitted), skipped=sum(child['skipped'] for child in omitted),
+                partial=any(child['partial'] for child in omitted), truncated=bool(omitted), children=[]))
+        result['children'].sort(key=lambda child: child['bytes'], reverse=True)
+        return result
+    started = time.monotonic()
+    result = visit(os.fspath(root) if hasattr(os, 'fspath') else str(root), 0)
+    result['durationSeconds'] = round(time.monotonic() - started, 2)
+    return result
+
+
+def scan_tree(root, max_depth=4, seconds=45, max_nodes=4000, expand_threshold=None):
     """Count readable file lengths; never follow junctions/symlinks or read contents."""
+    if expand_threshold is not None:
+        return scan_expanded_tree(root, expand_threshold, seconds, max_depth)
     deadline = time.monotonic() + seconds
     budget = [max_nodes]
     def visit(directory, depth):
@@ -92,8 +167,10 @@ def windows_volumes():
     return values if isinstance(values, list) else [values]
 
 
-def collect_storage(drives=None, seconds=45, depth=4):
+def collect_storage(drives=None, seconds=45, depth=4, expand_threshold=None):
     result = dict(id=uuid.uuid4().hex, capturedAt=now(), maxDepth=depth, volumes=[])
+    if expand_threshold is not None:
+        result['expandThresholdBytes'] = expand_threshold
     for volume in windows_volumes():
         selected = volume['drive'].lower() in [d.rstrip('\\/').lower() for d in drives] if drives else volume['physical']
         volume['usedBytes'] = max(0, volume['sizeBytes'] - volume['freeBytes'])
@@ -102,7 +179,7 @@ def collect_storage(drives=None, seconds=45, depth=4):
         volume['note'] = 'No physical partition mapping; use --drives to include this volume'
         if selected:
             print(f"Scanning {volume['drive']} (budget {seconds}s)", flush=True)
-            volume['tree'] = scan_tree(volume['drive'] + '\\', depth, seconds)
+            volume['tree'] = scan_tree(volume['drive'] + '\\', depth, seconds, expand_threshold=expand_threshold)
             tree = volume['tree']
             volume['status'] = 'partial' if tree['partial'] or tree['errors'] else 'complete'
             volume['note'] = 'Readable file lengths; system/protected files may be omitted'
@@ -255,11 +332,12 @@ def main():
     parser.add_argument('--drives', nargs='+', help='Volumes to scan; default: physically mapped local volumes')
     parser.add_argument('--seconds-per-volume', type=float, default=45)
     parser.add_argument('--depth', type=int, default=4)
+    parser.add_argument('--expand-over-gb', type=float, help='Expand directories and name individual files at or above this GiB threshold')
     parser.add_argument('--output', help='Default: update --computer atomically')
     parser.add_argument('--skip-ai', action='store_true', help='Skip optional scripts/ai-probe.py integration')
     args = parser.parse_args()
-    if not 0 < args.seconds_per_volume <= 3600 or not 1 <= args.depth <= 8:
-        parser.error('seconds-per-volume must be 0..3600 and depth must be 1..8')
+    if not 0 < args.seconds_per_volume <= 3600 or not 1 <= args.depth <= 64 or (args.expand_over_gb is not None and not 0 < args.expand_over_gb <= 1048576):
+        parser.error('Invalid scan time, depth (1..64), or expansion threshold')
     filename = Path(args.computer)
     pc = json.loads(filename.read_text(encoding='utf-8-sig'))
     if pc.get('schemaVersion') != 1 or not isinstance(pc.get('hardware'),dict):
@@ -275,7 +353,9 @@ def main():
             pc['ai']=namespace['collect_ai']()
         print(f"WSL: {len(snapshot['wsl']['distributions'])} distributions; Docker: {snapshot['docker']['status']}", flush=True)
     if args.kind in ('storage','all'):
-        pc['storageSnapshots'] = (pc.get('storageSnapshots', []) + [collect_storage(args.drives,args.seconds_per_volume,args.depth)])[-20:]
+        threshold = int(args.expand_over_gb * 1024**3) if args.expand_over_gb is not None else None
+        depth = 64 if threshold is not None else args.depth
+        pc['storageSnapshots'] = (pc.get('storageSnapshots', []) + [collect_storage(args.drives,args.seconds_per_volume,depth,threshold)])[-20:]
     output = Path(args.output) if args.output else filename
     temporary = output.with_name(output.name + '.tmp')
     temporary.write_text(json.dumps(pc, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
