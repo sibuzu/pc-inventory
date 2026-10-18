@@ -4,7 +4,7 @@ import {aiSummary,aiDetails,mountAiPackages} from './ai.mjs';
 import {nasSummary} from './nas.mjs';
 import {expansionSummary,expansionDetails,expansionAssessment} from './expansion.mjs';
 import {storageUsageLabel} from './usage.mjs';
-import {hardwareYearLabel,hardwareYearDetails} from './hardware-year.mjs';
+import {hardwareYearLabel,hardwareYearDetails} from './hardware-year.mjs?v=20261018-numeric';
 const tabDefinitions=pc=>[['overview','總覽',''],['hardware','硬體規格',''],['software','軟體清單',pc.software.length],['storage','儲存空間',''],['subsystems','子系統',''],['system','系統環境','']];
 const $=selector=>document.querySelector(selector);
 const storeKey='pc-atlas.imports.v1';
