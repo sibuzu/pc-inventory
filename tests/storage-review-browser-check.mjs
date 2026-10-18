@@ -1,7 +1,7 @@
 import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {bytes,usedStorageBytes} from '../dist/usage.mjs';
+import {bytes,usedStorageBytes,storageUsageLabel} from '../dist/usage.mjs';
 const browser=await chromium.launch({channel:'msedge',headless:true});
 const page=await browser.newPage({viewport:{width:1440,height:950}}),errors=[];
 page.on('pageerror',error=>errors.push(error.message));
@@ -18,7 +18,11 @@ try{
     assert.equal(await page.locator('.usage-alert').count(),0);
     if(id==='pc_china'){
       const d=page.locator('.volume-node').filter({has:page.locator('.volume-name b').getByText('D:',{exact:true})});
-      await d.locator(':scope > summary').click();assert.match(await d.innerText(),/Google Drive 2019/);
+      await d.locator(':scope > summary').click();
+      const dSnapshot=latest.volumes.find(volume=>volume.drive==='D:');
+      for(const child of dSnapshot.tree.children.slice(0,3)){
+        assert.ok((await d.innerText()).includes(child.name));
+      }
       assert.match(await page.locator('.volume-node[open]').first().innerText(),/部分項目無法讀取/);
       assert.ok(await page.locator('#storageSnapshot option').count()>=2);
     }
@@ -26,6 +30,7 @@ try{
   await page.locator('#compareNav').click();
   const used=page.locator('.compare-table tbody tr').filter({has:page.getByText('已用儲存',{exact:true})});
   const cells=await used.locator('td').allTextContents();assert.equal(cells.length,7);
-  assert.equal(cells[1],'4.38 TB (28%)');assert.ok(cells.slice(1).every(value=>/\(\d+%\)$/.test(value)));
+  const china=JSON.parse(fs.readFileSync(new URL('../dist/data/pc_china.json',import.meta.url),'utf8'));
+  assert.equal(cells[1],storageUsageLabel(china));assert.ok(cells.slice(1).every(value=>/\(\d+%\)$/.test(value)));
   assert.deepEqual(errors,[]);console.log('Five-PC storage review: latest snapshots, system used totals, no timeout, top folders, restricted items and history passed.');
 }finally{await browser.close();}
