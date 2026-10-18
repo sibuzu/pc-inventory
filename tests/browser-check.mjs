@@ -52,7 +52,9 @@ try{
   const scriptResponse=await context.request.get('http://127.0.0.1:4173/collect-pc.ps1');assert.equal(scriptResponse.status(),200);
   await page.keyboard.press('Escape');
   await page.evaluate(()=>localStorage.clear());
-  await page.goto('http://127.0.0.1:4173/#pc_china');await page.getByRole('heading',{name:'pc_china',exact:true}).waitFor();
+  await page.goto('http://127.0.0.1:4173/#pc_china');await page.reload();await page.getByRole('heading',{name:'pc_china',exact:true}).waitFor();
+  assert.match(await page.locator('#readyCount').innerText(),/01/);
+  await page.evaluate(()=>document.querySelector('#toast').classList.remove('show'));
   await page.setViewportSize({width:390,height:844});
   await page.getByRole('tab',{name:'總覽',exact:true}).click();
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'mobile overview must fit viewport');
