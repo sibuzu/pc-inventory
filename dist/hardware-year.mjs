@@ -1,5 +1,3 @@
-import {escapeHtml as e} from './inventory.mjs';
-
 // Release years describe the detected configuration, never purchase dates.
 const item=(match,year,url)=>({match,year,url});
 const cpus=[
@@ -42,6 +40,3 @@ export function hardwareYearAssessment(pc){
   return {year:parts.length&&parts.every(x=>x.year)?Math.max(...parts.map(x=>x.year)):null,platformYear:platform.length?Math.max(...platform):null,parts};
 }
 export const hardwareYearLabel=pc=>{const a=hardwareYearAssessment(pc);return a.year?String(a.year):'待確認';};
-export function hardwareYearDetails(computers){
-  return `<details class="expansion-sources"><summary>年份推估依據與來源</summary><p>依已盤點 CPU、GPU 與主機板／機型的推出年份，取其中最新年份作為目前配置最早可能組成的起點。這是推估，並非實際購買或出廠年份；較舊平台可能後來升級顯示卡。Dell／NAS 使用整機型號的年份；虛擬與遠端顯示介面不列入。</p>${computers.filter(pc=>pc.hardware).map(pc=>{const a=hardwareYearAssessment(pc);return `<details><summary>${e(pc.name)} · ${e(hardwareYearLabel(pc))}${a.platformYear?` · 平台 ${a.platformYear}`:''}</summary><ul>${a.parts.map(x=>`<li>${e(x.kind)}：${e(x.name)} · ${x.year??'年份待確認'}${x.url?` · <a href="${e(x.url)}" target="_blank" rel="noopener noreferrer">官方來源 ↗</a>`:''}</li>`).join('')}</ul></details>`;}).join('')}</details>`;
-}
