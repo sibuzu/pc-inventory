@@ -1,1 +1,7 @@
-["pc_china.json"]
+[
+  "pc_china.json",
+  "pc_sdl.json",
+  "pc_data.json",
+  "pc_rtx.json",
+  "rtx_5090.json"
+]

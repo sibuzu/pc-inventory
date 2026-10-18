@@ -253,6 +253,7 @@ def main():
     parser.add_argument('--seconds-per-volume', type=float, default=45)
     parser.add_argument('--depth', type=int, default=4)
     parser.add_argument('--output', help='Default: update --computer atomically')
+    parser.add_argument('--skip-ai', action='store_true', help='Skip optional scripts/ai-probe.py integration')
     args = parser.parse_args()
     if not 0 < args.seconds_per_volume <= 3600 or not 1 <= args.depth <= 8:
         parser.error('seconds-per-volume must be 0..3600 and depth must be 1..8')
@@ -264,6 +265,11 @@ def main():
         snapshot = collect_environments()
         pc['subsystems'] = snapshot
         pc.pop('environmentSnapshots', None)
+        ai_script=Path(__file__).parent/'scripts'/'ai-probe.py'
+        if ai_script.exists() and not args.skip_ai:
+            namespace={'__name__':'pc_atlas_ai'}
+            exec(compile(ai_script.read_text(encoding='utf-8'),'ai-probe.py','exec'),namespace)
+            pc['ai']=namespace['collect_ai']()
         print(f"WSL: {len(snapshot['wsl']['distributions'])} distributions; Docker: {snapshot['docker']['status']}", flush=True)
     if args.kind in ('storage','all'):
         pc['storageSnapshots'] = (pc.get('storageSnapshots', []) + [collect_storage(args.drives,args.seconds_per_volume,args.depth)])[-20:]

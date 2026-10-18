@@ -1,6 +1,40 @@
 # PC Atlas 電腦規格總覽
 
-以繁體中文瀏覽多台電腦的硬體、作業系統與已安裝軟體。介面使用淺色主題與黑字，左側選單可獨立捲動。`pc_china` 已從這台 Windows 電腦擷取實際規格；`pc_sdl`、`pc_data`、`pc_rtx`、`pc_5090`、`pc_nas` 尚待匯入。
+以繁體中文瀏覽多台電腦的硬體、作業系統與已安裝軟體。介面使用淺色主題與黑字，左側選單可獨立捲動。`pc_china`、`pc_sdl`、`pc_data`、`pc_rtx`、`rtx_5090` 已擷取實際規格；`pc_nas` 待完成 QNAP SSH 授權後盤點。
+
+## 透過 SSH 盤點
+
+在管理電腦上使用 Python 3.10 以上與 SSH 金鑰登入。遠端 Linux 支援 Python 3.4 以上，並相容 Docker 1.13；不安裝遠端套件。
+
+```powershell
+# Linux（此處 pc_sdl 是本機 SSH config 別名）
+python collect-ssh.py --host pc_sdl --name pc_sdl --output .sites-runtime/pc_sdl-raw.json
+# Windows
+python collect-ssh.py --host jack@192.168.100.186 --platform windows --name pc_data --output .sites-runtime/pc_data-raw.json
+python collect-ssh.py --host jack@192.168.100.180 --platform windows --name pc_rtx --output .sites-runtime/pc_rtx-raw.json
+# 僅更新 CUDA、PyTorch 和環境套件（output 必須已存在）
+python collect-ssh.py --host pc_sdl --name pc_sdl --output .sites-runtime/pc_sdl-raw.json --only-ai
+# 更新網站內建資料，保留原有歷史快照與較新的 AI 盤點
+node manage-inventory.mjs .sites-runtime/pc_sdl-raw.json
+```
+
+Linux 使用 SSH stdin 執行採集程式；Windows 先透過 SCP 傳送一次性來源資料，再由 PowerShell 執行暫存工具，完成後清除本次檔案。Windows 遠端需要 PATH 中有 Python。工具只查詢狀態，不啟停容器或子系統、不安裝或升級套件。預設使用每個磁碟區 45 秒掃描預算，可用 `--storage-seconds 30` 調整。
+
+Linux 的硬體來源包含 `/proc`、`/sys`；若 `sudo -n dmidecode -t 17` 已獲授權，會擷取 DIMM 容量、插槽、型號及時脈，不保存序號。無權限時使用 OS 可見的 MemTotal 並標明來源。軟體清單為已安裝 dpkg 套件。Linux Docker 透過本機 Unix socket 執行 GET 查詢，記錄 Engine OS、Image OS/架構/大小、容器可寫層與 Volume 使用量。Image 共用層總量使用 Engine 的 LayersSize，不重複加總各 Image 的大小。未提供的回收空間與快取保留未知。
+
+## CUDA / PyTorch：所有設備的統一欄位
+
+總覽顯示 CUDA／PyTorch 摘要，「系統環境」提供詳細盤點：
+
+- NVIDIA 驅動版本、`nvidia-smi` 回報的 CUDA 支援上限。
+- 可執行的 `nvcc` 與常見 CUDA 安裝目錄；目錄來源與 nvcc 驗證來源分開標示。
+- PATH、常見 Anaconda/Miniconda、Conda 註冊環境、`~/.virtualenvs` 與執行中容器的 Python 環境。
+- 每個環境的 Python、PyTorch、PyTorch 編譯 CUDA、cuDNN 原始版本碼、GPU 可用狀態與裝置數。
+- Python distribution metadata 與 `conda-meta` 的套件名稱、版本、來源與 Build；按環境樹狀展開與搜尋。這些套件與 OS 軟體清單分開呈現。
+
+本機可執行 `python scripts/ai-probe.py` 輸出 AI 盤點 JSON。SSH 採集會自動整合此資訊，`--only-ai` 可單獨更新。沒有回報的欄位保留未知，不根據驅動、Toolkit 或 PyTorch 的其中一個版本推測其他版本；CPU build 與 CUDA build 分開顯示。未註冊的專案 venv、未執行的容器、沒有 Python 的映像檔不會被啟動掃描。探測 PyTorch 會載入該環境的套件，但不執行訓練。
+
+更新採集工具後，請同步 `collect-ssh.py` 與 `scripts/` 中的三個採集工具至 `dist/` 對應位置，讓網頁下載版本保持一致。
 
 ## 用 VS Code Live Server 開啟
 

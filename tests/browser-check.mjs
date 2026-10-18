@@ -11,6 +11,7 @@ page.on('pageerror',error=>errors.push(error.message));
 const snapshot=JSON.parse(fs.readFileSync(new URL('../dist/data/pc_china.json',import.meta.url),'utf8'));
 const screenshotDir=fs.mkdtempSync(path.join(os.tmpdir(),'pc-atlas-qa-'));
 try{
+  await page.route('**/data/index.json',route=>route.fulfill({json:['pc_china.json']}));
   const response=await page.goto('http://127.0.0.1:4173');assert.equal(response.status(),200);
   await page.getByRole('heading',{name:'pc_china',exact:true}).waitFor();
   assert.match(await page.locator('.hardware-grid').innerText(),/48 GB/);

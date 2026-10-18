@@ -19,7 +19,7 @@ export function normalizeEnvironmentSnapshots(input){return array(input,20).map(
       summary:array(d.summary,32).map(v=>{obj(v);return {type:str(v.type),totalCount:str(v.totalCount),active:str(v.active),size:str(v.size),reclaimable:str(v.reclaimable)};}),
       containers:array(d.containers).map(v=>{obj(v);return {name:str(v.name),image:str(v.image),state:str(v.state),status:str(v.status),size:str(v.size)};}),
       images:array(d.images).map(v=>{obj(v);return {repository:str(v.repository),tag:str(v.tag),id:str(v.id),size:str(v.size),created:str(v.created),os:str(v.os),architecture:str(v.architecture),sizeBytes:num(v.sizeBytes)};}),
-      volumes:array(d.volumes).map(v=>{obj(v);return {name:str(v.name),driver:str(v.driver),scope:str(v.scope)};}),warnings:array(d.warnings,50).map(str)}};
+      volumes:array(d.volumes).map(v=>{obj(v);return {name:str(v.name),driver:str(v.driver),scope:str(v.scope),sizeBytes:num(v.sizeBytes),refCount:num(v.refCount)};}),warnings:array(d.warnings,50).map(str)}};
 });}
 export function normalizeSubsystems(value){return value==null?null:normalizeEnvironmentSnapshots([value])[0];}
 export function mergeSnapshots(before=[],after=[]){const map=new Map(before.map(x=>[x.id,x]));for(const item of after)map.set(item.id,item);return [...map.values()].sort((a,b)=>Date.parse(a.capturedAt)-Date.parse(b.capturedAt)).slice(-20);}
