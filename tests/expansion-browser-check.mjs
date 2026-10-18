@@ -1,0 +1,34 @@
+import {chromium} from 'playwright';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+const browser=await chromium.launch({channel:'msedge',headless:true});
+const page=await browser.newPage({viewport:{width:1440,height:950}}),errors=[];
+page.on('pageerror',error=>errors.push(error.message));
+const screenshots=fs.mkdtempSync(path.join(os.tmpdir(),'pc-atlas-expansion-'));
+try{
+  await page.goto('http://127.0.0.1:4173/#rtx_5090');await page.getByRole('heading',{name:'rtx_5090',exact:true}).waitFor();
+  await page.getByRole('tab',{name:'硬體規格',exact:true}).click();
+  const assessment=page.locator('.expansion-section');assert.match(await assessment.innerText(),/128 \/ 192 \/ 256 GB/);
+  assert.match(await assessment.innerText(),/最高改為 x8/);
+  await page.getByText('官方依據與購買前確認',{exact:true}).click();
+  assert.equal(await page.locator('.expansion-sources a').count(),2);
+  assert.equal(await assessment.evaluate(el=>getComputedStyle(el).color),'rgb(0, 0, 0)');
+  await page.screenshot({path:path.join(screenshots,'5090-expansion.png'),fullPage:true});
+  await page.locator('#compareNav').click();
+  const rows=page.locator('.compare-table tbody tr');
+  const memory=rows.filter({has:page.getByText('記憶體擴充',{exact:true})});
+  const storage=rows.filter({has:page.getByText('儲存擴充',{exact:true})});
+  assert.equal(await memory.locator('td').count(),7);assert.equal(await storage.locator('td').count(),7);
+  assert.match(await memory.locator('td').nth(4).innerText(),/已達官方 128 GB/);
+  assert.match(await storage.locator('td').nth(5).innerText(),/GPU 改為 x8/);
+  await page.screenshot({path:path.join(screenshots,'comparison.png'),fullPage:true});
+  await page.getByRole('button',{name:/pc_nas/}).click();await page.getByRole('tab',{name:'硬體規格',exact:true}).click();
+  assert.match(await assessment.innerText(),/官方最高 8 GB/);
+  await page.setViewportSize({width:390,height:844});
+  assert.equal(await page.locator('.expansion-grid').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1);
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+  await page.screenshot({path:path.join(screenshots,'nas-mobile.png'),fullPage:true});
+  assert.deepEqual(errors,[]);console.log(JSON.stringify({passed:true,checks:'six-device expansion comparison, official links, GPU lane sharing, black text, NAS limits, mobile layout',screenshots}));
+}finally{await browser.close();}

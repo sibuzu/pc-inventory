@@ -111,6 +111,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\collect-pc.ps1 -Name pc_ch
 
 ## 資料說明
 
+規格比較表新增「記憶體擴充」與「儲存擴充」，各台「硬體規格」提供選項、限制與原廠來源。`dist/expansion.mjs` 的評估依精確主機板／機型及 CPU 配對，不以設備名稱推定能力；不相符時顯示待查。空記憶體槽依完整 DIMM 清單推估；儲存接孔占用、機殼硬碟架及供電未確認時不宣稱可直接加裝。官方規格核對日期為 2026-10-18，較高容量仍需確認 BIOS 與 QVL。
+
 - 硬體與 OS：Windows CIM。NVIDIA 顯示記憶體和驅動優先使用 `nvidia-smi`；沒有可靠數值時顯示「未取得」。
 - 軟體：Windows 系統及目前使用者的 Uninstall 登錄檔，排除系統元件、依名稱與版本去重。並非所有可攜式程式、Store App 或 Python/npm 套件。
 - 開發工具：PATH 中可執行的 Node.js、Python、Git、Docker、CUDA compiler 版本。
