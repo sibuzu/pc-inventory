@@ -8,7 +8,7 @@ const page=await browser.newPage({viewport:{width:1440,height:950}}),errors=[];
 page.on('pageerror',error=>errors.push(error.message));
 try{
   await page.goto('http://127.0.0.1:4173/#rtx_5090');await page.getByRole('heading',{name:'rtx_5090',exact:true}).waitFor();
-  assert.match(await page.locator('#readyCount').innerText(),new RegExp(String(files.length).padStart(2,'0')));
+  assert.equal(await page.locator('#machineCount').innerText(),`${files.length} / ${plannedNames.length}`);
   assert.equal(await page.locator('.machine-dot.ready').count(),files.length);
   assert.deepEqual(await page.locator('.machine-name').allTextContents(),plannedNames);
   assert.deepEqual(plannedNames.slice(-3),['pc_one','pc_andy','pc_nas']);
