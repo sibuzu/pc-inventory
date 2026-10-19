@@ -1,6 +1,15 @@
 # PC Atlas 電腦規格總覽
 
-以繁體中文瀏覽多台電腦的硬體、作業系統與已安裝軟體。介面使用淺色主題與黑字，左側選單可獨立捲動。設備順序為 `pc_china`、`pc_sdl`、`pc_data`、`pc_rtx`、`rtx_5090`、`pc_one`、`pc_andy`、`pc_nas`；pc_one 與 pc_andy 的工作用途暫留空白。
+以繁體中文瀏覽多台電腦的硬體、作業系統與已安裝軟體。介面使用淺色主題與黑字，左側選單可獨立捲動。設備順序為 `pc_china`、`pc_sdl`、`pc_data`、`pc_rtx`、`rtx_5090`、`pc_one`、`pc_andy`、`pc_nas`；pc_one 用於「信嘉/大尾備援」，pc_andy 為「宸宇工作機」。
+
+首頁預設開啟規格比較。可將以下路徑接在網站網址後，直接分享指定頁面：
+
+- `#compare` 或 `?view=compare`：規格比較。
+- `#pc_china`：pc_china 總覽，保留既有連結格式。
+- `#pc_china/storage` 或 `?pc=pc_china&tab=storage`：pc_china 儲存空間。
+- 分頁名稱：`overview`（總覽）、`hardware`（硬體規格）、`software`（軟體清單）、`storage`（儲存空間）、`subsystems`（子系統）、`system`（系統環境）。
+
+電腦名稱可用 `pc_china` 或 `PC-CHINA`；點選電腦與分頁會同步更新網址，支援重新整理與瀏覽器上一頁／下一頁。
 
 ## 透過 SSH 盤點
 

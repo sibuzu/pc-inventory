@@ -5,7 +5,7 @@
   "status": "collected",
   "collectedAt": "2026-10-18T17:46:37.1671873+08:00",
   "source": "Windows CIM / 登錄檔 / 本機命令 (SSH)",
-  "workPurpose": "",
+  "workPurpose": "信嘉/大尾備援",
   "hardware": {
     "manufacturer": "ASUS",
     "model": "All Series",

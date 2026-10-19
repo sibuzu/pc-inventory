@@ -6,7 +6,7 @@ const browser=await chromium.launch({channel:'msedge',headless:true});
 const page=await browser.newPage({viewport:{width:1440,height:950}}),errors=[];
 page.on('pageerror',error=>errors.push(error.message));
 try{
-  await page.goto('http://127.0.0.1:4173');await page.getByRole('heading',{name:'pc_china',exact:true}).waitFor();
+  await page.goto('http://127.0.0.1:4173/#pc_china');await page.getByRole('heading',{name:'pc_china',exact:true}).waitFor();
   for(const id of ['pc_china','pc_sdl','pc_data','pc_rtx','rtx_5090']){
     const pc=JSON.parse(fs.readFileSync(new URL(`../dist/data/${id}.json`,import.meta.url),'utf8'));
     await page.getByRole('button',{name:new RegExp(id)}).click();

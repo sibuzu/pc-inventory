@@ -10,7 +10,7 @@ const page=await context.newPage(),errors=[];
 page.on('pageerror',error=>errors.push(error.message));
 const screenshots=fs.mkdtempSync(path.join(os.tmpdir(),'pc-atlas-usage-'));
 try{
-  await page.goto('http://127.0.0.1:4173');await page.getByRole('heading',{name:'pc_china',exact:true}).waitFor();
+  await page.goto('http://127.0.0.1:4173/#pc_china');await page.getByRole('heading',{name:'pc_china',exact:true}).waitFor();
   assert.deepEqual(await page.getByRole('tab').allTextContents(),['總覽','硬體規格','軟體清單 138','儲存空間','子系統','系統環境']);
   assert.equal(await page.locator('body').evaluate(el=>getComputedStyle(el).color),'rgb(0, 0, 0)');
   assert.equal(await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(245, 247, 245)');
