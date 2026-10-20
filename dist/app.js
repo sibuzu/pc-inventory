@@ -1,4 +1,4 @@
-import {normalizeComputer,parseImport,mergeComputers,withPlanned,filterSoftware,escapeHtml as e,capacity,primaryGpu} from './inventory.mjs';
+import {normalizeComputer,parseImport,mergeComputers,withPlanned,filterSoftware,escapeHtml as e,capacity,primaryGpu} from './inventory.mjs?v=20261020-david';
 import {mountStorage,mountSubsystems} from './usage-view.mjs';
 import {aiSummary,aiDetails,mountAiPackages} from './ai.mjs';
 import {nasSummary} from './nas.mjs';

@@ -11,7 +11,7 @@ try{
   assert.equal(await page.locator('#machineCount').innerText(),`${files.length} / ${plannedNames.length}`);
   assert.equal(await page.locator('.machine-dot.ready').count(),files.length);
   assert.deepEqual(await page.locator('.machine-name').allTextContents(),plannedNames);
-  assert.deepEqual(plannedNames.slice(-3),['pc_one','pc_andy','pc_nas']);
+  assert.deepEqual(plannedNames.slice(-4),['pc_one','pc_andy','pc_david','pc_nas']);
   assert.match(await page.locator('.hardware-grid').innerText(),/RTX 5090/);
   await page.getByRole('tab',{name:'系統環境',exact:true}).click();
   assert.match(await page.locator('.ai-inventory').innerText(),/13\.2/);
@@ -55,6 +55,10 @@ try{
     await page.getByRole('tab',{name:'儲存空間',exact:true}).click();
     await page.getByText(/本次依 5 GB 門檻保留深層明細/).waitFor();
   }else await page.getByText('尚未匯入',{exact:true}).waitFor();
+  await page.getByRole('button',{name:/pc_david/}).click();await page.getByRole('heading',{name:'pc_david',exact:true}).waitFor();
+  await page.getByText('尚未匯入',{exact:true}).waitFor();
+  await page.reload();await page.getByRole('heading',{name:'pc_david',exact:true}).waitFor();
+  await page.getByText('尚未匯入',{exact:true}).waitFor();
   await page.locator('#compareNav').click();assert.equal(await page.locator('.compare-table thead th').count(),plannedNames.length+1);
   assert.match(await page.locator('.compare-table').innerText(),/rtx_5090/);
   assert.deepEqual(errors,[]);console.log('Fleet browser check passed: device count, pc_one / pc_andy / pc_nas order, CUDA/PyTorch, Docker and comparison.');

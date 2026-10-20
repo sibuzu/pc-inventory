@@ -6,7 +6,7 @@ const pc=JSON.parse(fs.readFileSync(new URL('../dist/data/pc_china.json',import.
 test('real pc_china snapshot preserves physical hardware and software',()=>{
   const result=normalizeComputer(pc);assert.equal(result.id,'pc_china');assert.equal(result.hardware.memoryGB,48);assert.equal(result.software.length,138);assert.equal(primaryGpu(result).vramMB,11264);assert.match(result.hardware.cpu[0].name,/9700F/);assert.equal(result.hardware.disks.length,4);
 });
-test('planned devices stay pending until real data is imported',()=>{const all=withPlanned([normalizeComputer(pc)]);assert.equal(all.length,8);assert.deepEqual(all.slice(1).map(x=>x.id),['pc_sdl','pc_data','pc_rtx','rtx_5090','pc_one','pc_andy','pc_nas']);assert.ok(all.slice(1).every(x=>x.status==='pending'&&!x.hardware));});
+test('planned devices stay pending until real data is imported',()=>{const all=withPlanned([normalizeComputer(pc)]);assert.equal(all.length,9);assert.deepEqual(all.slice(1).map(x=>x.id),['pc_sdl','pc_data','pc_rtx','rtx_5090','pc_one','pc_andy','pc_david','pc_nas']);assert.ok(all.slice(1).every(x=>x.status==='pending'&&!x.hardware));});
 test('single and exported bundle imports round-trip and replace by id',()=>{
   const next={...pc,id:'pc_sdl',name:'pc_sdl'};const merged=mergeComputers([normalizeComputer(pc)],parseImport(next));assert.equal(merged.length,2);assert.equal(withPlanned(merged)[1].status,'collected');assert.equal(mergeComputers(merged,[next]).length,2);assert.deepEqual(parseImport({computers:merged}),merged);
 });

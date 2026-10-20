@@ -11,9 +11,9 @@
     <a class="brand" href="#"><span class="brand-mark">▧</span><span>PC ATLAS<small>PERSONAL COMPUTER INVENTORY</small></span></a>
     <div class="workspace"><span class="workspace-icon">J</span><div>我的電腦實驗室<small>Personal workspace</small></div><span class="workspace-dot"></span></div>
     <div class="nav-caption">WORKSPACE</div>
-    <button class="nav-button active" id="inventoryNav"><span>▦</span> 電腦總覽 <b>08</b></button>
+    <button class="nav-button active" id="inventoryNav"><span>▦</span> 電腦總覽 <b>09</b></button>
     <button class="nav-button" id="compareNav"><span>⇄</span> 規格比較</button>
-    <div class="nav-caption machines-heading">YOUR MACHINES <span id="machineCount">0 / 8</span></div>
+    <div class="nav-caption machines-heading">YOUR MACHINES <span id="machineCount">0 / 9</span></div>
     <nav id="machineList" aria-label="電腦清單"></nav>
     <button class="add-machine" id="addMachine">＋ 匯入電腦規格</button>
     <div class="sidebar-bottom"><span class="tiny-dot"></span> 本機規格快照<small>讓每一台電腦，都有自己的檔案。</small><span class="version">PC ATLAS <span>v1.0</span></span></div>
@@ -22,7 +22,7 @@
     <header class="topbar"><div class="breadcrumb">工作空間 <span>/</span> 電腦總覽 <span>/</span> <strong id="crumb">pc_china</strong></div><div class="top-actions"><span class="snapshot-label"><span class="tiny-dot"></span> 規格資料庫</span><button class="icon-button" id="helpButton" aria-label="如何新增電腦" title="如何新增電腦">?</button></div></header>
     <main>
       <div class="page-heading"><div><div class="eyebrow">YOUR HARDWARE, AT A GLANCE</div><h1>電腦規格總覽<span class="accent-dot">.</span></h1></div><button class="button" id="exportAll">↓ 匯出資料庫</button></div>
-      <div class="content-toolbar"><div class="section-label"><span class="tiny-dot"></span> 設備檔案 <span id="deviceIndex">01 — 08</span></div><label class="device-search"><span>⌕</span><input id="deviceSearch" type="search" placeholder="搜尋電腦或硬體型號…" aria-label="搜尋電腦或硬體型號"><kbd>/</kbd></label></div>
+      <div class="content-toolbar"><div class="section-label"><span class="tiny-dot"></span> 設備檔案 <span id="deviceIndex">01 — 09</span></div><label class="device-search"><span>⌕</span><input id="deviceSearch" type="search" placeholder="搜尋電腦或硬體型號…" aria-label="搜尋電腦或硬體型號"><kbd>/</kbd></label></div>
       <section id="deviceView" aria-live="polite"><div class="loading">正在讀取電腦規格…</div></section>
       <footer><span>PC ATLAS <span class="footer-separator">/</span> 每一份配置，都值得記錄。</span><span>數據來自擷取快照 · 非即時監控</span></footer>
     </main>
@@ -31,6 +31,6 @@
   <dialog id="helpDialog"><div class="dialog-heading"><div><span class="eyebrow">GROW YOUR INVENTORY</span><h2>加入下一台電腦</h2></div><button class="icon-button" id="closeHelp" aria-label="關閉">×</button></div><p>在要加入的 Windows 電腦執行規格擷取工具，再將產生的 JSON 匯入。</p><ol><li><a href="collect-pc.ps1" download>下載 collect-pc.ps1 規格擷取工具 ↓</a></li><li>在檔案所在資料夾開啟 PowerShell，執行：<code>powershell -NoProfile -ExecutionPolicy Bypass -File .\collect-pc.ps1 -Name pc_sdl</code><small>將 pc_sdl 換成 pc_data、pc_rtx、pc_5090 或其他名稱。</small></li><li>按「匯入電腦規格」，選取產生的 JSON。</li></ol><div class="info-note">匯入內容會儲存在目前瀏覽器。匯出資料庫可備份或移至其他瀏覽器；網站內建資料的更新方式請見專案 README。</div><button class="button primary" id="importFromHelp">＋ 匯入規格 JSON</button></dialog>
   <dialog id="usageHelpDialog"><div class="dialog-heading"><div><span class="eyebrow">COLLECT ON YOUR PC</span><h2 id="usageHelpTitle">擷取儲存空間快照</h2></div><button class="icon-button" id="closeUsageHelp" aria-label="關閉使用量說明">×</button></div><p>在這台電腦執行唯讀盤點工具，再匯入更新的規格檔。需要 Python 3.10 以上。</p><ol><li id="usageHelpDownloads"><a href="collect-usage.py" download>下載 collect-usage.py ↓</a>，再 <button class="text-button" id="usageDownloadPc">下載目前電腦的規格 JSON ↓</button>，放在同一資料夾。</li><li>開啟該資料夾的終端機並執行：<code id="usageCommand"></code></li><li>工具會更新原本的 JSON。匯入該檔案即可更新網頁資料。</li></ol><div class="info-note">資料夾掃描預設每個實體磁碟區最多 45 秒，未掃完會標示「部分掃描」。子系統盤點會讀取 WSL 與本機 Docker；停止中的子系統會保留其目前狀態。</div><button class="button primary" id="usageImport">＋ 匯入更新後的 JSON</button></dialog>
   <div id="toast" role="status"></div>
-  <script src="app.js?v=20261019-compact-header" type="module"></script>
+  <script src="app.js?v=20261020-david" type="module"></script>
 </body>
 </html>

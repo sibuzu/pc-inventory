@@ -31,7 +31,7 @@ try{
   await page.getByRole('heading',{name:'pc_sdl',exact:true}).waitFor();
   await page.getByText('尚未匯入',{exact:true}).waitFor();
   await page.locator('#compareNav').click();
-  assert.equal(await page.locator('.compare-table thead th').count(),9);
+  assert.equal(await page.locator('.compare-table thead th').count(),10);
   assert.match(await page.locator('.compare-table').innerText(),/待匯入/);
   // Keep this import/persistence fixture small; real storage histories are covered separately.
   const pc={...snapshot,storageSnapshots:[],id:'pc_sdl',name:'pc_sdl',software:[{name:'<img src=x onerror="alert(1)">',version:'1',publisher:'Test'}]};
@@ -46,16 +46,16 @@ try{
   const exported=JSON.parse(fs.readFileSync(await download.path(),'utf8'));
   assert.equal(exported.computers.length,2);
   await page.reload();await page.getByRole('heading',{name:'pc_sdl',exact:true}).waitFor();
-  assert.match(await page.locator('#machineCount').innerText(),/2 \/ 8/);
+  assert.match(await page.locator('#machineCount').innerText(),/2 \/ 9/);
   await page.locator('#importFile').setInputFiles({name:'bad.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({...pc,id:'../bad'}))});
   await page.locator('#toast').filter({hasText:'匯入失敗'}).waitFor();
-  assert.match(await page.locator('#machineCount').innerText(),/2 \/ 8/);
+  assert.match(await page.locator('#machineCount').innerText(),/2 \/ 9/);
   await page.locator('#helpButton').click();await page.getByRole('dialog').waitFor();
   const scriptResponse=await context.request.get('http://127.0.0.1:4173/collect-pc.ps1');assert.equal(scriptResponse.status(),200);
   await page.keyboard.press('Escape');
   await page.evaluate(()=>localStorage.clear());
   await page.goto('http://127.0.0.1:4173/#pc_china');await page.reload();await page.getByRole('heading',{name:'pc_china',exact:true}).waitFor();
-  assert.match(await page.locator('#machineCount').innerText(),/1 \/ 8/);
+  assert.match(await page.locator('#machineCount').innerText(),/1 \/ 9/);
   await page.evaluate(()=>document.querySelector('#toast').classList.remove('show'));
   await page.setViewportSize({width:390,height:844});
   await page.getByRole('tab',{name:'總覽',exact:true}).click();
